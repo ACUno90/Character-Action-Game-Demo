@@ -104,7 +104,7 @@ public class Player : MonoBehaviour, IDamage
     {
         dashing = true;
         float startTime = Time.time;
-        while (Time.time < startTime + 0.5f)
+        while (Time.time < startTime + 0.5f) 
         {
             controller.Move(moveDirc * dashspeed * Time.deltaTime);
             yield return null;
