@@ -29,18 +29,23 @@ public class Player : MonoBehaviour, IDamage
     bool isShotting;
     private bool DoubleJump;
     public bool dashing;
+    public Vector2 turn;
+    public float sensitivity = .5f;
+
 
     // Start is called before the first frame update
     void Start()
     {
-
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;   
     }
 
     // Update is called once per frame
     void Update()
     {
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootdistance, Color.red);
-
+        turn.x += Input.GetAxis("Mouse X") * sensitivity;
+        turn.y += Input.GetAxis("Mouse Y") * sensitivity;
+        transform.rotation = Quaternion.Euler(-turn.y, turn.x, 0);
         Movement();
         sprint();
        
@@ -75,14 +80,14 @@ public class Player : MonoBehaviour, IDamage
 
 
 
+
         //if (Input.GetButton("Fire1") && !isShotting)
         //{
         //    StartCoroutine(shoot());
         //}
-
         if (Input.GetButtonDown("Dash") &&!dashing)
         {
-           // dashcount++;
+        
             StartCoroutine(Dash());
         }
     }
@@ -111,24 +116,7 @@ public class Player : MonoBehaviour, IDamage
         }
         dashing = false;
     }
-    //IEnumerator shoot()
-    //{
-    //    isShotting = true;
-    //    //Debug.Log("shooting");
-    //    RaycastHit hit;
-    //    if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootdistance, ~IgnorePlayer))
-    //    {
 
-    //        IDamage dmg = hit.collider.GetComponent<IDamage>();
-    //        Debug.Log(hit.collider.transform.name);
-    //        if (dmg != null)
-    //        {
-    //            dmg.takeDamaage(ShootDmg);
-    //        }
-    //    }
-    //    yield return new WaitForSeconds(Shootrate);
-    //    isShotting = false;
-    //}
     public void takeDamage(int amount)
     {
 
