@@ -2,17 +2,44 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MovementSuperState : MonoBehaviour
+public class MovementSuperState : PlayerState
 {
-    // Start is called before the first frame update
-    void Start()
+    // have the constructor like this so it knows what we are talking about once we use the states
+    public MovementSuperState(Player pc, string animationName, PlayerStateMachine stateMachine) : base(pc, stateMachine, pc.animationController, animationName) { }
+    protected Vector2 movementInput;
+    protected bool isGrounded;
+
+    public override void LogicUpdate()
     {
-        
+        base.LogicUpdate();
+        player.Movement();
     }
 
-    // Update is called once per frame
-    void Update()
+    //For Move use
+    public override void TransitionChecks()
     {
+        base.TransitionChecks();
+
+        if (Input.GetKeyDown(KeyCode.LeftAlt))
+        {
+          
+            player.MoveState = Player.MovementState.stinger;
+            stateMachine.ChangeState(new CharacterActionMovementSuperState(player, "isUsingActionMove", stateMachine));
+       
+            return;
+        }
+   
+        if (Input.GetButtonDown("Air Launcher"))
+        {
+         player.MoveState = Player.MovementState.laucher;
+            stateMachine.ChangeState(new CharacterActionMovementSuperState(player, "isUsingActionMove", stateMachine));
         
+            return;
+        }
+
+
     }
+
+
+
 }
