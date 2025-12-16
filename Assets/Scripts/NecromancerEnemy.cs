@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class NewBehaviourScript : MonoBehaviour
+public class NewBehaviourScript : MonoBehaviour,IDamage
 {
     [Header("Basics")]
     [SerializeField] NavMeshAgent Agent;
@@ -36,19 +36,21 @@ public class NewBehaviourScript : MonoBehaviour
 
     // Audio 
     [SerializeField] AudioSource Aud;
-    [SerializeField] AudioClip roboDeath;
-    [SerializeField] float AudrobotDeathVol;
-    [SerializeField] AudioClip RobotHit;
-    [SerializeField] float AudrobotHitVol;
-    [SerializeField] AudioClip RobotLaser;
-    [SerializeField] float AudRobotLaser;
-    [SerializeField] AudioClip[] Footsteps;
-    [SerializeField] float AudFootSteps;
+    [SerializeField] AudioClip NecromancerDeath;
+    [SerializeField] float AudNecromancerDeathVol;
+    [SerializeField] AudioClip NecromancerHit;
+    [SerializeField] float AudNecromancerHitVol;
+    [SerializeField] AudioClip NecromancerFireBall;
+    [SerializeField] float AudNecromancerFireBall;
+    [SerializeField] AudioClip[] NecromancerFootsteps;
+    [SerializeField] float AudNecromancerFootSteps;
+     int damage;
 
     bool isPlayingStop;
     void Start()
     {
 
+        GameManger.Instance.updateGameGoal(1);
 
         colorOrig = Model.material.color;
     }
@@ -116,7 +118,7 @@ public class NewBehaviourScript : MonoBehaviour
         Agent.SetDestination(GameManger.Instance.Player.transform.position);
         if (!Isshooting)
         {
-            Aud.PlayOneShot(RobotLaser, AudRobotLaser);
+            Aud.PlayOneShot(NecromancerFireBall, AudNecromancerFireBall);
             // Calculate the direction towards the player
             Vector3 shootDirection = (GameManger.Instance.Player.transform.position - Shotpostion.position).normalized;
 
@@ -146,7 +148,7 @@ public class NewBehaviourScript : MonoBehaviour
     IEnumerator flashColor()
     {
         Model.material.color = Color.red;
-        yield return new WaitForSeconds(.15f);
+        yield return new WaitForSeconds(.2f);
         Model.material.color = colorOrig;
     }
     public void takeDamage(int amount)
@@ -155,13 +157,15 @@ public class NewBehaviourScript : MonoBehaviour
         HP -= amount;
         StartCoroutine(flashColor());
         flashColor();
-        Aud.PlayOneShot(RobotHit, AudrobotHitVol);
+        Aud.PlayOneShot(NecromancerHit, AudNecromancerHitVol);
         if (HP <= 0)
         {
-            Aud.PlayOneShot(roboDeath, AudrobotDeathVol);
-            int GoldDropped = Random.Range(1, 20);
+            Aud.PlayOneShot(NecromancerDeath, AudNecromancerDeathVol);
+         
            // GameManager.Instance.PlayerScript.Gold += GoldDropped;
             Destroy(gameObject);
+            GameManger.Instance.updateGameGoal(-1);
+
         }
 
     }
@@ -207,14 +211,26 @@ public class NewBehaviourScript : MonoBehaviour
         Isshooting = false;
     }
 
+
+    private void OnTriggerEnter(Collider collision)
+    {
+        IDamage hit = collision.GetComponent<IDamage>();
+        if (hit != null) hit.takeDamage(damage);
+       if (collision.GetComponentInParent<IDamage>() != null)
+        {
+            hit = collision.GetComponentInParent<IDamage>();
+            hit.takeDamage(damage);
+        }
+    }
     IEnumerator playSteps()
     {
         isPlayingStop = true;
 
         //play walk sound
-        Aud.PlayOneShot(Footsteps[Random.Range(0, Footsteps.Length)], AudFootSteps);
+        Aud.PlayOneShot(NecromancerFootsteps[Random.Range(0, NecromancerFootsteps.Length)], AudNecromancerFootSteps);
         yield return new WaitForSeconds(.8f);
         isPlayingStop = false;
     }
+ 
 }
 

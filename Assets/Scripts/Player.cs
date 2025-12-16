@@ -51,8 +51,15 @@ public class Player : MonoBehaviour, IDamage
     public bool isAirLauncher;
     private bool IsPlayingStop;
     public Vector3 moveDirc;
+    SwordDamage sd;
     Vector3 Playerval;
     int jumpcount;
+    public float cooldownAttackTime = 2f;
+    private float nextAttackTime = 0f;
+    public static int noOfClicks = 0;
+    float lastClickedTime = 0;
+    float maxComboDelay = 1f;
+    private bool canAcceptNextInput = true;
     //int dashcount;
     //bool isSptrinting;
     //bool isShotting;
@@ -88,7 +95,7 @@ public class Player : MonoBehaviour, IDamage
         MovementSuperState movementState = new MovementSuperState(this, "isMoving", state);
         state.InitializeStateMachine(movementState);
 
-       
+
     }
 
     // Update is called once per frame
@@ -103,7 +110,38 @@ public class Player : MonoBehaviour, IDamage
         //sprint();
         // so we can use the logic from movement state machine to dash and walk
         state.GetCurrentState().LogicUpdate();
-  
+
+        ////to make it so you need to clilck to attack and click 3 times for combo
+        //if (animationController.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.7f && animationController.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
+        //{
+        //    animationController.SetBool("Attack1", false);
+        //}
+        //if (animationController.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.7f && animationController.GetCurrentAnimatorStateInfo(0).IsName("Attack2"))
+        //{
+        //    animationController.SetBool("Attack2", false);
+        //}
+        //if (animationController.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.7f && animationController.GetCurrentAnimatorStateInfo(0).IsName("Attack3"))
+        //{
+        //    animationController.SetBool("Attack3", false);
+        //    noOfClicks = 0;
+        //}
+        //// reset combo if time exceedes max combo delay
+        //if (Time.time - lastClickedTime > maxComboDelay)
+        //{
+        //    noOfClicks = 0;
+        //}
+
+        //cooldown time for attack
+        //if (Time.time > nextAttackTime)
+        //{
+            //check for mouse input
+            if (Input.GetMouseButtonDown(0))
+            {
+               // sd.Attack();
+                SimpleCombo();
+            }
+      //  }
+
     }
     public void Movement()
     {
@@ -174,11 +212,7 @@ public class Player : MonoBehaviour, IDamage
                 DoubleJump = !DoubleJump;
         }
 
-        //if (Input.GetButtonDown("Jump") && Playerval.y>0f)
-        //{
-        //    jumpcount++;
-        //    Playerval.y = JumpSpeed * 0.5f;
-        //}
+     
         controller.Move(Playerval * Time.deltaTime);
         Playerval.y -= Gravity * Time.deltaTime;
 
@@ -195,20 +229,7 @@ public class Player : MonoBehaviour, IDamage
             StartCoroutine(Dash());
         }
     }
-    //void sprint()
-    //{
-    //    if (Input.GetButtonDown("Sprint"))
-    //    {
-    //        Speed *= SptrintMax;
-    //        isSptrinting = true;
-    //    }
-    //    else if (Input.GetButtonDown("Sprint"))
-    //    {
-    //        Speed /= SptrintMax;
-    //        isSptrinting = false;
-    //    }
 
-    //}
     IEnumerator Dash()
     {
         dashing = true;
@@ -233,11 +254,38 @@ public class Player : MonoBehaviour, IDamage
     {
         isAirLauncher = true;
         controller.Move(transform.up * AirLauncherSpeed * Time.deltaTime);
-       
+
     }
 
     public void SimpleCombo()
     {
+      if(canAcceptNextInput == false)
+        {
+            return;
+        }
+        noOfClicks++;
+        // lastClickedTime = Time.time;
+        AnimatorStateInfo AStates = animationController.GetCurrentAnimatorStateInfo(0);
+        if (AStates.IsName("HumanM@Idle01"))
+        {
+            noOfClicks = 1;
+            animationController.SetTrigger("SwordAttack");
+            return;
+        }
+        else if(AStates.IsName("slash1"))
+        {
+            noOfClicks = 2;
+            animationController.SetTrigger("SwordAttack2");
+            return;
+        }
+        else if(AStates.IsName("slash2"))
+        {
+            noOfClicks = 3;
+            animationController.SetTrigger("SwordAttack3");
+            return;
+       
+        }
+       // canAcceptNextInput = false;
 
     }
     public void takeDamage(int damage)
@@ -246,7 +294,7 @@ public class Player : MonoBehaviour, IDamage
 
         if (health <= 0)
         {
-            // GameManger.Instance.StartLose();
+            GameManger.Instance.StartLose();
         }
         aud.PlayOneShot(audHurt[Random.Range(0, audHurt.Length)], audHurtVol);
     }
@@ -268,6 +316,15 @@ public class Player : MonoBehaviour, IDamage
         IsPlayingStop = false;
     }
 
+    public void EnableNextInput()
+    {
+        canAcceptNextInput = true;
+    }
 
+    public void ResetCombo()
+    {
+        noOfClicks = 0;
+        canAcceptNextInput = true;
+    }
 
 }

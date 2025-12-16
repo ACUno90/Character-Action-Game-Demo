@@ -154,7 +154,7 @@ MonoBehaviour:
     m_Bits: 8
   bounciness: 0.033
   useGravity: 0
-  explosionDamage: 40
+  explosionDamage: 2
   explosionRange: 1
   explosionForce: 0
   bulletDamage: 4

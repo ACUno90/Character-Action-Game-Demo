@@ -34,6 +34,7 @@ public class GameManger : MonoBehaviour
     float timeScale_OG;
     float safe;
     float healthPercentage;
+     public int enmenycount;
 
     void Awake()
     {
@@ -41,7 +42,16 @@ public class GameManger : MonoBehaviour
         timeScale_OG = Time.timeScale;
         Player = GameObject.FindGameObjectWithTag("Player");
         PlayerScript = Player.GetComponent<Player>();
+        //if (Instance != null && Instance != this)
+        //{
+        //    Destroy(gameObject);
+        //}
+        //else
+        //{
+        //    Instance = this;
+        //}
     }
+
 
 
 
@@ -144,4 +154,23 @@ public class GameManger : MonoBehaviour
     //    yield return new WaitForEndOfFrame();
     //    DMG_Screen.SetActive(false);
     //}11
+    public void StartLose()
+    {
+        StartPause();
+        Menu_Active = Menu_Lose;
+        Menu_Lose.SetActive(true);
+    }
+
+
+    public void updateGameGoal(int goal)
+    {
+        enmenycount += goal;
+        if (enmenycount <= 0)
+        {
+
+            StartPause();
+            Menu_Active = Menu_Win;
+            Menu_Win.SetActive(Ispaused);
+        }
+    }
 }

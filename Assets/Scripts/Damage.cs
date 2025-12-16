@@ -19,6 +19,14 @@ public class Damage : MonoBehaviour
             rb.velocity = transform.forward * speed;
             Destroy(gameObject, destoryTime);
         }
+        if(DT == damageType.staionary)
+        {
+            //Destroy(gameObject, destoryTime);
+        }
+        if(DT == damageType.melee)
+        {
+           // Destroy(gameObject, destoryTime);
+        }
     }
 
     private void OnTriggerEnter(Collider other)

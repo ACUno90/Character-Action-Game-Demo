@@ -20,18 +20,19 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     bool isinSight;
 
     [SerializeField] AudioSource Aud;
-    [SerializeField] AudioClip roboDeath;
-    [SerializeField] float AudrobotDeathVol;
-    [SerializeField] AudioClip RobotHit;
-    [SerializeField] float AudrobotHitVol;
-    [SerializeField] AudioClip[] Footsteps;
-    [SerializeField] float AudFootSteps;
+    [SerializeField] AudioClip ZombiDeath;
+    [SerializeField] float AudZombietDeathVol;
+    [SerializeField] AudioClip ZombieHit;
+    [SerializeField] float AudZombieHitVol;
+    [SerializeField] AudioClip[] ZombieFootsteps;
+    [SerializeField] float AudZombieFootSteps;
 
     bool isPlayingStop;
     void Start()
     {
         isPlayingStop = false;
         colorOrig = Model.material.color;
+        GameManger.Instance.updateGameGoal(1);
     }
 
 
@@ -64,13 +65,14 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     {
         HP -= amount;
         StartCoroutine(flashColor());
-        Aud.PlayOneShot(RobotHit, AudrobotHitVol);
+        Aud.PlayOneShot(ZombieHit, AudZombieHitVol);
         if (HP <= 0)
         {
-            Aud.PlayOneShot(roboDeath, AudrobotDeathVol);
+            Aud.PlayOneShot(ZombiDeath, AudZombietDeathVol);
             int GoldDropped = Random.Range(1, 20);
-          //  GameManger.Instance.PlayerScript.Gold += GoldDropped;
+            //  GameManger.Instance.PlayerScript.Gold += GoldDropped;
             Destroy(gameObject);
+            GameManger.Instance.updateGameGoal(-1);
         }
 
     }
@@ -115,7 +117,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         isPlayingStop = true;
 
         //play walk sound
-        Aud.PlayOneShot(Footsteps[Random.Range(0, Footsteps.Length)], AudFootSteps);
+        Aud.PlayOneShot(ZombieFootsteps[Random.Range(0, ZombieFootsteps.Length)], AudZombieFootSteps);
         yield return new WaitForSeconds(.8f);
         isPlayingStop = false;
     }
