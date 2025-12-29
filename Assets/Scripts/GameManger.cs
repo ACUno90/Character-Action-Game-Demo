@@ -42,14 +42,7 @@ public class GameManger : MonoBehaviour
         timeScale_OG = Time.timeScale;
         Player = GameObject.FindGameObjectWithTag("Player");
         PlayerScript = Player.GetComponent<Player>();
-        //if (Instance != null && Instance != this)
-        //{
-        //    Destroy(gameObject);
-        //}
-        //else
-        //{
-        //    Instance = this;
-        //}
+   
     }
 
 

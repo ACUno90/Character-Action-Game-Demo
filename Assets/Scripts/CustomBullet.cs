@@ -27,7 +27,7 @@ public class CustomBullet : MonoBehaviour
     public bool explodeOnTouch = true;
 
     int collisions;
-    PhysicMaterial physics_mat;
+    PhysicsMaterial physics_mat;
     void Start()
     {
         SetUp();
@@ -49,10 +49,10 @@ public class CustomBullet : MonoBehaviour
     private void SetUp()
     {
         //New Physic Material
-        physics_mat = new PhysicMaterial();
+        physics_mat = new PhysicsMaterial();
         physics_mat.bounciness = bounciness;
-        physics_mat.frictionCombine = PhysicMaterialCombine.Minimum;
-        physics_mat.bounceCombine = PhysicMaterialCombine.Maximum;
+        physics_mat.frictionCombine = PhysicsMaterialCombine.Minimum;
+        physics_mat.bounceCombine = PhysicsMaterialCombine.Maximum;
         //Assign Material and Gravity
         GetComponent<SphereCollider>().material = physics_mat;
         rb.useGravity = useGravity;

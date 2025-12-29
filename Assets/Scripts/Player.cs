@@ -70,7 +70,7 @@ public class Player : MonoBehaviour, IDamage
     public bool dashing;
     public Vector2 turn;
     public float sensitivity = .5f;
-   public Animator animationController;
+    public Animator animationController;
     // to make it use states
     private PlayerStateMachine state;
 
@@ -111,53 +111,30 @@ public class Player : MonoBehaviour, IDamage
         // so we can use the logic from movement state machine to dash and walk
         state.GetCurrentState().LogicUpdate();
 
-        ////to make it so you need to clilck to attack and click 3 times for combo
-        //if (animationController.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.7f && animationController.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
-        //{
-        //    animationController.SetBool("Attack1", false);
-        //}
-        //if (animationController.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.7f && animationController.GetCurrentAnimatorStateInfo(0).IsName("Attack2"))
-        //{
-        //    animationController.SetBool("Attack2", false);
-        //}
-        //if (animationController.GetCurrentAnimatorStateInfo(0).normalizedTime > 0.7f && animationController.GetCurrentAnimatorStateInfo(0).IsName("Attack3"))
-        //{
-        //    animationController.SetBool("Attack3", false);
-        //    noOfClicks = 0;
-        //}
-        //// reset combo if time exceedes max combo delay
-        //if (Time.time - lastClickedTime > maxComboDelay)
-        //{
-        //    noOfClicks = 0;
-        //}
+        //check for mouse input
+        if (Input.GetMouseButtonDown(0))
+        {
 
-        //cooldown time for attack
-        //if (Time.time > nextAttackTime)
-        //{
-            //check for mouse input
-            if (Input.GetMouseButtonDown(0))
-            {
-               // sd.Attack();
-                SimpleCombo();
-            }
-      //  }
+            SimpleCombo();
+        }
+
 
     }
     public void Movement()
     {
-       
+
         if (controller.isGrounded)
         {
             Playerval = Vector3.zero;
             jumpcount = 0;
             DoubleJump = false;
-            if(!IsPlayingStop && moveDirc != Vector3.zero)
+            if (!IsPlayingStop && moveDirc != Vector3.zero)
             {
                 StartCoroutine(PlaySteps());
             }
         }
         moveDirc = Input.GetAxis("Horizontal") * transform.right + Input.GetAxis("Vertical") * transform.forward;
-       
+
 
 
 
@@ -165,7 +142,7 @@ public class Player : MonoBehaviour, IDamage
         if (moveDirc == Vector3.zero)
         {
             //idle animation
-            if(isStinger == true)
+            if (isStinger == true)
             {
                 animationController.SetBool("Stinger", false);
                 isStinger = false;
@@ -174,12 +151,18 @@ public class Player : MonoBehaviour, IDamage
 
             animationController.SetFloat("speed", 0);
         }
-      
+
         else
         {
-        //run animation
-        animationController.SetFloat("speed", 1);
-         }
+            //run animation
+            animationController.SetFloat("speed", 1);
+        }
+
+        if (isAirLauncher == true)
+        {
+            animationController.SetBool("airLauncher", false);
+            isAirLauncher = false;
+        }
 
 
         if (Input.GetButtonDown("Jump") && jumpcount < JumpMax)
@@ -206,13 +189,13 @@ public class Player : MonoBehaviour, IDamage
             }
             else
             {
-              animationController.SetFloat("JumpSpeed", 1);
+                animationController.SetFloat("JumpSpeed", 1);
             }
 
-                DoubleJump = !DoubleJump;
+            DoubleJump = !DoubleJump;
         }
 
-     
+
         controller.Move(Playerval * Time.deltaTime);
         Playerval.y -= Gravity * Time.deltaTime;
 
@@ -224,7 +207,7 @@ public class Player : MonoBehaviour, IDamage
         //{
         //    StartCoroutine(shoot());
         //}
-        if (Input.GetButtonDown("Dash") &&!dashing)
+        if (Input.GetButtonDown("Dash") && !dashing)
         {
             StartCoroutine(Dash());
         }
@@ -234,7 +217,7 @@ public class Player : MonoBehaviour, IDamage
     {
         dashing = true;
         float startTime = Time.time;
-        while (Time.time < startTime + 0.5f) 
+        while (Time.time < startTime + 0.5f)
         {
             controller.Move(moveDirc * dashspeed * Time.deltaTime);
             yield return null;
@@ -253,18 +236,19 @@ public class Player : MonoBehaviour, IDamage
     public void AirLauncher()
     {
         isAirLauncher = true;
+        animationController.SetBool("airLauncher", true);
         controller.Move(transform.up * AirLauncherSpeed * Time.deltaTime);
 
     }
 
     public void SimpleCombo()
     {
-      if(canAcceptNextInput == false)
+        if (canAcceptNextInput == false)
         {
             return;
         }
         noOfClicks++;
-        // lastClickedTime = Time.time;
+
         AnimatorStateInfo AStates = animationController.GetCurrentAnimatorStateInfo(0);
         if (AStates.IsName("HumanM@Idle01"))
         {
@@ -272,20 +256,20 @@ public class Player : MonoBehaviour, IDamage
             animationController.SetTrigger("SwordAttack");
             return;
         }
-        else if(AStates.IsName("slash1"))
+        else if (AStates.IsName("slash1"))
         {
             noOfClicks = 2;
             animationController.SetTrigger("SwordAttack2");
             return;
         }
-        else if(AStates.IsName("slash2"))
+        else if (AStates.IsName("slash2"))
         {
             noOfClicks = 3;
             animationController.SetTrigger("SwordAttack3");
             return;
-       
+
         }
-       // canAcceptNextInput = false;
+        // canAcceptNextInput = false;
 
     }
     public void takeDamage(int damage)
@@ -305,7 +289,7 @@ public class Player : MonoBehaviour, IDamage
         IsPlayingStop = true;
         //Play footstep sound   
         aud.PlayOneShot(audWalk[Random.Range(0, audWalk.Length)], audWalkVol);
-        if(Speed < 6)
+        if (Speed < 6)
         {
             yield return new WaitForSeconds(0.5f);
         }
@@ -326,5 +310,7 @@ public class Player : MonoBehaviour, IDamage
         noOfClicks = 0;
         canAcceptNextInput = true;
     }
+
+  
 
 }

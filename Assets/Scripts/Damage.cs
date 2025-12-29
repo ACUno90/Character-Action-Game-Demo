@@ -16,7 +16,7 @@ public class Damage : MonoBehaviour
     {
         if (DT == damageType.bullet)
         {
-            rb.velocity = transform.forward * speed;
+            rb.linearVelocity = transform.forward * speed;
             Destroy(gameObject, destoryTime);
         }
         if(DT == damageType.staionary)
