@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -26,7 +27,9 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     [SerializeField] float AudZombieHitVol;
     [SerializeField] AudioClip[] ZombieFootsteps;
     [SerializeField] float AudZombieFootSteps;
+    public Animator animationZombieController;
 
+    bool ZombieHurt;
     bool isPlayingStop;
     void Start()
     {
@@ -66,14 +69,20 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         HP -= amount;
         StartCoroutine(flashColor());
         Aud.PlayOneShot(ZombieHit, AudZombieHitVol);
+        //animationZombieController.SetBool("ZombieHit", true);
+        animationZombieController.SetTrigger("ZombieHurt");
         if (HP <= 0)
         {
             Aud.PlayOneShot(ZombiDeath, AudZombietDeathVol);
             int GoldDropped = Random.Range(1, 20);
             //  GameManger.Instance.PlayerScript.Gold += GoldDropped;
-            Destroy(gameObject);
+
             GameManger.Instance.updateGameGoal(-1);
+            animationZombieController.SetTrigger("ZombieDeath");
+            //  Destroy(gameObject);
         }
+        //animationZombieController.SetBool("ZombieHit", false);
+
 
     }
     public void Patroling()
@@ -86,13 +95,19 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         {
             if (!isPlayingStop) playSteps();
             agent.SetDestination(WalkPoint);
+
+
+
         }
 
         Vector3 DistanceWalking = transform.position - WalkPoint;
+        animationZombieController.SetFloat("ZombieSpeed", 0);
 
         if (DistanceWalking.magnitude < 1f)
         {
             IsWalking = false;
+            animationZombieController.SetFloat("ZombieSpeed", 1);
+
         }
     }
     private void SearchWalkpath()

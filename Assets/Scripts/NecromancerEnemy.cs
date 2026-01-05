@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -47,6 +48,9 @@ public class NewBehaviourScript : MonoBehaviour,IDamage
      int damage;
 
     bool isPlayingStop;
+    public Animator animationNecroController;
+    bool NercroEnemyHurt;
+
     void Start()
     {
 
@@ -158,15 +162,19 @@ public class NewBehaviourScript : MonoBehaviour,IDamage
         StartCoroutine(flashColor());
         flashColor();
         Aud.PlayOneShot(NecromancerHit, AudNecromancerHitVol);
+        animationNecroController.SetTrigger("NercoHurt");
         if (HP <= 0)
         {
             Aud.PlayOneShot(NecromancerDeath, AudNecromancerDeathVol);
-         
-           // GameManager.Instance.PlayerScript.Gold += GoldDropped;
-            Destroy(gameObject);
-            GameManger.Instance.updateGameGoal(-1);
 
+            // GameManager.Instance.PlayerScript.Gold += GoldDropped;
+
+            GameManger.Instance.updateGameGoal(-1);
+            animationNecroController.SetTrigger("NercoDie");
+   
+            // Destroy(gameObject);
         }
+        //  animationNecroController.SetBool("GotHitN", false);
 
     }
 
@@ -183,10 +191,13 @@ public class NewBehaviourScript : MonoBehaviour,IDamage
         }
 
         Vector3 DistanceWalking = transform.position - WalkPoint;  // calucating its walking distance 
+        animationNecroController.SetFloat("speed", 0);
 
         if (DistanceWalking.magnitude < 1f) // if its lower than one, you reached the walkpoint and stopped walking and will search for a new one
         {
             IsWalking = false;
+            animationNecroController.SetFloat("speed", 1);
+
         }
     }
     private void SearchWalkroad()
