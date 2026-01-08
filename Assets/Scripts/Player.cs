@@ -22,7 +22,7 @@ public class Player : MonoBehaviour, IDamage
     //[SerializeField] int maxHp;
     [SerializeField] int dashspeed;
     [SerializeField] int dashmax;
-
+    ZombieEnemy df;
     public float health;
     public float maxHealth;
 
@@ -237,6 +237,7 @@ public class Player : MonoBehaviour, IDamage
     {
         isAirLauncher = true;
         animationController.SetBool("airLauncher", true);
+        df.WalkPoint.y += AirLauncherForce;
         controller.Move(transform.up * AirLauncherSpeed * Time.deltaTime);
 
     }
@@ -254,6 +255,7 @@ public class Player : MonoBehaviour, IDamage
         {
             noOfClicks = 1;
             animationController.SetTrigger("SwordAttack");
+           // df.ApplyKnockback(df.transform.forward, 70f);
             return;
         }
         else if (AStates.IsName("slash1"))
@@ -266,6 +268,9 @@ public class Player : MonoBehaviour, IDamage
         {
             noOfClicks = 3;
             animationController.SetTrigger("SwordAttack3");
+            //df.ApplyKnockback(transform.forward, 70f);
+
+            //add a bool check here for truth so we can call it in collider func in zombie enemy
             return;
 
         }

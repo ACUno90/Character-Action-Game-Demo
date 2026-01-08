@@ -171,7 +171,8 @@ public class NewBehaviourScript : MonoBehaviour,IDamage
 
             GameManger.Instance.updateGameGoal(-1);
             animationNecroController.SetTrigger("NercoDie");
-   
+            Debug.Log("Necromancer dead" );
+
             // Destroy(gameObject);
         }
         //  animationNecroController.SetBool("GotHitN", false);

@@ -14,6 +14,16 @@ public class GameManger : MonoBehaviour
     [SerializeField] GameObject Menu_Win;
     [SerializeField] GameObject Menu_Pause;
     [SerializeField] GameObject Menu_Lose;
+    [Header("Style Meter")]
+    [SerializeField] GameObject DopeImage;
+    [SerializeField] GameObject CrazyImage;
+    [SerializeField] GameObject BallerImage;
+    [SerializeField] GameObject AwesomeSauceImage;
+    [SerializeField] GameObject SupremeImage;
+
+
+
+
 
     [Header("other")]
     public static GameManger Instance;

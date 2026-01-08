@@ -424,6 +424,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: c47b214702c0fb847aa970933b8051e5, type: 3}
   AudZombieFootSteps: 1
   animationZombieController: {fileID: 0}
+  rb: {fileID: 0}
+  knockbackDuration: 0.5
 --- !u!82 &108822471
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1594,7 +1596,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -1631,7 +1633,7 @@ MonoBehaviour:
   dashmax: 10
   health: 100
   maxHealth: 100
-  AirLauncherForce: 0
+  AirLauncherForce: 20
   AitLauncherdDamage: 0
   AirLauncherSpeed: 120
   SimpleCombospeed: 0
@@ -3665,6 +3667,7 @@ GameObject:
   - component: {fileID: 1125128944}
   - component: {fileID: 1125128943}
   - component: {fileID: 1125128947}
+  - component: {fileID: 1125128948}
   m_Layer: 9
   m_Name: Zombie beta
   m_TagString: Untagged
@@ -3844,7 +3847,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 0
   Model: {fileID: 8537947921917789862}
-  HP: 20
+  HP: 100
   agent: {fileID: 1125128943}
   Ground:
     serializedVersion: 2
@@ -3863,6 +3866,8 @@ MonoBehaviour:
   ZombieFootsteps: []
   AudZombieFootSteps: 0
   animationZombieController: {fileID: 1125128947}
+  rb: {fileID: 1125128948}
+  knockbackDuration: 2
 --- !u!95 &1125128947
 Animator:
   serializedVersion: 7
@@ -3885,6 +3890,33 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!54 &1125128948
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1125128941}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 1
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 1
 --- !u!1001 &1152701059
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4478,6 +4510,11 @@ MonoBehaviour:
   Menu_Win: {fileID: 1102579323}
   Menu_Pause: {fileID: 740591126}
   Menu_Lose: {fileID: 1016608915}
+  DopeImage: {fileID: 0}
+  CrazyImage: {fileID: 0}
+  BallerImage: {fileID: 0}
+  AwesomeSauceImage: {fileID: 0}
+  SupremeImage: {fileID: 0}
   Player: {fileID: 0}
   PlayerScript: {fileID: 0}
   DMG_Screen: {fileID: 0}

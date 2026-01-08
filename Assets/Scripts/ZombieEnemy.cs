@@ -28,6 +28,8 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     [SerializeField] AudioClip[] ZombieFootsteps;
     [SerializeField] float AudZombieFootSteps;
     public Animator animationZombieController;
+    private Rigidbody rb;
+    public float knockbackDuration = 0.5f;
 
     bool ZombieHurt;
     bool isPlayingStop;
@@ -36,6 +38,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         isPlayingStop = false;
         colorOrig = Model.material.color;
         GameManger.Instance.updateGameGoal(1);
+       rb = GetComponent<Rigidbody>();
     }
 
 
@@ -61,8 +64,36 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         {
             hit = collision.GetComponentInParent<IDamage>();
             hit.takeDamage(damage);
+
+
+
         }
     }
+    public void ApplyKnockback(Vector3 direction, float force)
+    {
+        // StartCoroutine(KnockbackCoroutine(direction, force));
+        //disbale navmesh agent
+        agent.enabled = false;
+        //calculate knockback vector
+        Vector3 knockbackVector = direction.normalized * force;
+        //apply an impulse force to the rigidbody
+        rb.AddForce(knockbackVector, ForceMode.Impulse);
+        Debug.Log("Zombie got knocked back ");
+
+        //use a courtine to re-enable the navmesh agent after a short delay
+        StartCoroutine(KnockbackCoroutine());
+    }
+    IEnumerator KnockbackCoroutine()
+    {
+      yield return new WaitForSeconds(knockbackDuration);
+        //re-enable navmesh agent
+        agent.enabled = true;
+        //reser veclocity so it stops moving and not move infinite
+        rb.linearVelocity = Vector3.zero;
+        Debug.Log("Zombie back to normal");
+
+    }
+
 
     public void takeDamage(int amount)
     {
@@ -74,15 +105,17 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         if (HP <= 0)
         {
             Aud.PlayOneShot(ZombiDeath, AudZombietDeathVol);
-            int GoldDropped = Random.Range(1, 20);
-            //  GameManger.Instance.PlayerScript.Gold += GoldDropped;
+         
 
             GameManger.Instance.updateGameGoal(-1);
             animationZombieController.SetTrigger("ZombieDeath");
             //  Destroy(gameObject);
+            Debug.Log("ZombieDead as hell" );
+
         }
         //animationZombieController.SetBool("ZombieHit", false);
-
+        //add a if check if the player's simple 3 hit combo is true then apply knockback 
+        ApplyKnockback(-transform.forward, 5f);
 
     }
     public void Patroling()
@@ -96,7 +129,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
             if (!isPlayingStop) playSteps();
             agent.SetDestination(WalkPoint);
 
-
+           
 
         }
 
