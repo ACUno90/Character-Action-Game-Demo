@@ -115,7 +115,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         }
         //animationZombieController.SetBool("ZombieHit", false);
         //add a if check if the player's simple 3 hit combo is true then apply knockback 
-        ApplyKnockback(-transform.forward, 5f);
+        ApplyKnockback(-transform.forward, 1f);
 
     }
     public void Patroling()

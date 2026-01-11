@@ -12,7 +12,8 @@ public class NewBehaviourScript : MonoBehaviour,IDamage
     [SerializeField] Renderer Model;
     [SerializeField] Transform headPos;
     public LayerMask Ground, WherePlayer;
-
+    private Rigidbody rb;
+    public float knockbackDuration = 0.5f;
     [Header("Bullet")]
     [SerializeField] Transform Shotpostion;
     [SerializeField] GameObject Bullet;
@@ -55,7 +56,7 @@ public class NewBehaviourScript : MonoBehaviour,IDamage
     {
 
         GameManger.Instance.updateGameGoal(1);
-
+        rb = GetComponent<Rigidbody>();
         colorOrig = Model.material.color;
     }
 
@@ -155,6 +156,30 @@ public class NewBehaviourScript : MonoBehaviour,IDamage
         yield return new WaitForSeconds(.2f);
         Model.material.color = colorOrig;
     }
+    public void ApplyKnockbackNercro(Vector3 direction, float force)
+    {
+        // StartCoroutine(KnockbackCoroutine(direction, force));
+        //disbale navmesh agent
+        Agent.enabled = false;
+        //calculate knockback vector
+        Vector3 knockbackVector = direction.normalized * force;
+        //apply an impulse force to the rigidbody
+        rb.AddForce(knockbackVector, ForceMode.Impulse);
+        Debug.Log("Zombie got knocked back ");
+
+        //use a courtine to re-enable the navmesh agent after a short delay
+        StartCoroutine(KnockbackNercroCoroutine());
+    }
+    IEnumerator KnockbackNercroCoroutine()
+    {
+        yield return new WaitForSeconds(knockbackDuration);
+        //re-enable navmesh agent
+        Agent.enabled = true;
+        //reser veclocity so it stops moving and not move infinite
+        rb.linearVelocity = Vector3.zero;
+        Debug.Log("Zombie back to normal");
+
+    }
     public void takeDamage(int amount)
     {
 
@@ -176,6 +201,7 @@ public class NewBehaviourScript : MonoBehaviour,IDamage
             // Destroy(gameObject);
         }
         //  animationNecroController.SetBool("GotHitN", false);
+        ApplyKnockbackNercro(-transform.forward, 2f);
 
     }
 

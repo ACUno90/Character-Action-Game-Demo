@@ -424,7 +424,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: c47b214702c0fb847aa970933b8051e5, type: 3}
   AudZombieFootSteps: 1
   animationZombieController: {fileID: 0}
-  rb: {fileID: 0}
   knockbackDuration: 0.5
 --- !u!82 &108822471
 AudioSource:
@@ -1596,7 +1595,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 8
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -2707,6 +2706,7 @@ GameObject:
   - component: {fileID: 737899431}
   - component: {fileID: 737899432}
   - component: {fileID: 737899433}
+  - component: {fileID: 737899434}
   m_Layer: 9
   m_Name: Nercromancer alpaha
   m_TagString: Untagged
@@ -2752,6 +2752,7 @@ MonoBehaviour:
   WherePlayer:
     serializedVersion: 2
     m_Bits: 8
+  knockbackDuration: 0.5
   Shotpostion: {fileID: 1872455651}
   Bullet: {fileID: 2082271980986677770, guid: c339bed290febef4f8d6b35f41970f9e, type: 3}
   shootrate: 10
@@ -2935,6 +2936,33 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!54 &737899434
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 737899424}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 15
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &740591126
 GameObject:
   m_ObjectHideFlags: 0
@@ -3866,7 +3894,6 @@ MonoBehaviour:
   ZombieFootsteps: []
   AudZombieFootSteps: 0
   animationZombieController: {fileID: 1125128947}
-  rb: {fileID: 1125128948}
   knockbackDuration: 2
 --- !u!95 &1125128947
 Animator:
@@ -3909,14 +3936,14 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!1001 &1152701059
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6037,6 +6064,7 @@ MonoBehaviour:
   WherePlayer:
     serializedVersion: 2
     m_Bits: 8
+  knockbackDuration: 0.5
   Shotpostion: {fileID: 1713255820}
   Bullet: {fileID: 2082271980986677770, guid: c339bed290febef4f8d6b35f41970f9e, type: 3}
   shootrate: 10
