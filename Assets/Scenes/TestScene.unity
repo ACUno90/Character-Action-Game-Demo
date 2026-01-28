@@ -2878,10 +2878,12 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 542c6de8290f468499c26feb62eafe6e, type: 3}
   - {fileID: 8300000, guid: da883120e7a25c540b74cbcc8101867a, type: 3}
   audWalkVol: 0.5
+  enemyLayers2:
+    serializedVersion: 2
+    m_Bits: 512
   isStinger: 0
   isAirLauncher: 0
   moveDirc: {x: 0, y: 0, z: 0}
-  cooldownAttackTime: 2
   RequestingActionMove: 0
   dashing: 0
   turn: {x: 0, y: 0}
@@ -3412,6 +3414,8 @@ MonoBehaviour:
   shootrate: 10
   shootForce: 0
   shootUpForce: 0
+  airBorne: 0
+  NGravity: 20
   WalkPoint: {x: 0, y: 0, z: 0}
   walkpointRange: 20
   Sightrange: 60
@@ -4725,6 +4729,8 @@ MonoBehaviour:
   shootrate: 10
   shootForce: 0
   shootUpForce: 0
+  airBorne: 0
+  NGravity: 20
   WalkPoint: {x: 0, y: 0, z: 0}
   walkpointRange: 20
   Sightrange: 60
@@ -11412,6 +11418,8 @@ MonoBehaviour:
   shootrate: 10
   shootForce: 70
   shootUpForce: 3
+  airBorne: 0
+  NGravity: 20
   WalkPoint: {x: 0, y: 0, z: 0}
   walkpointRange: 20
   Sightrange: 60

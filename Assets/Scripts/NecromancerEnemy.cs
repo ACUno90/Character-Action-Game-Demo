@@ -4,7 +4,7 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class NewBehaviourScript : MonoBehaviour,IDamage
+public class NecromancerEnemy : MonoBehaviour,IDamage
 {
     [Header("Basics")]
     [SerializeField] NavMeshAgent Agent;
@@ -20,6 +20,8 @@ public class NewBehaviourScript : MonoBehaviour,IDamage
     [SerializeField] float shootrate;
     [SerializeField] float shootForce;
     [SerializeField] float shootUpForce;
+    public bool airBorne;
+    public float NGravity =20f;
     Color colorOrig;
     bool Isshooting;
 
@@ -81,9 +83,38 @@ public class NewBehaviourScript : MonoBehaviour,IDamage
             Shooting();
 
         }
+        if(!airBorne)return;
+        //check if grounded and if its the ground
+        if (Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit,1f,Ground))
+        {
+            EndLaunch();
+        }
+        else
+        {
+            rb.AddForce(Vector3.down * NGravity * rb.mass);
+        }
 
     }
 
+    public void Launch(float launchForce)
+    {
+       // rb.AddForce(Vector3.up * launchForce, ForceMode.Impulse);
+       airBorne = true;
+      //add launchForce to y velocity
+       rb.linearVelocity = new Vector3(rb.linearVelocity.x, launchForce, rb.linearVelocity.z);
+   //turn off navmesh agent
+           if (Agent !=null)
+            Agent.enabled = false;
+ 
+    }
+    public void EndLaunch()
+    {
+               airBorne = false;
+        //re-enable navmesh agent
+        if (Agent != null)
+            Agent.enabled = true;
+
+    }
 
     private void Shooting()
     {

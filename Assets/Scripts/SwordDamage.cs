@@ -19,7 +19,11 @@ public class SwordDamage : MonoBehaviour
             }
             Debug.Log("We hit " + enemy.name);
 
-
+            NecromancerEnemy necro = enemy.GetComponent<NecromancerEnemy>();
+            if (necro != null && !necro.airBorne)
+            {
+               necro.Launch(20f);
+            }
         }
     }
 

@@ -47,6 +47,7 @@ public class Player : MonoBehaviour, IDamage
     [SerializeField] AudioClip[] audWalk;
     [SerializeField] float audWalkVol;
 
+    public LayerMask enemyLayers2;
     public bool isStinger;
     public bool isAirLauncher;
     private bool IsPlayingStop;
@@ -54,7 +55,7 @@ public class Player : MonoBehaviour, IDamage
     SwordDamage sd;
     Vector3 Playerval;
     int jumpcount;
-    public float cooldownAttackTime = 2f;
+  //  public float cooldownAttackTime = 2f;
     private float nextAttackTime = 0f;
     public static int noOfClicks = 0;
     float lastClickedTime = 0;
@@ -106,8 +107,7 @@ public class Player : MonoBehaviour, IDamage
         turn.x += Input.GetAxis("Mouse X") * sensitivity;
         turn.y += Input.GetAxis("Mouse Y") * sensitivity;
         transform.rotation = Quaternion.Euler(-turn.y, turn.x, 0);
-        //Movement();
-        //sprint();
+  
         // so we can use the logic from movement state machine to dash and walk
         state.GetCurrentState().LogicUpdate();
 
@@ -170,18 +170,7 @@ public class Player : MonoBehaviour, IDamage
             jumpcount++;
             Playerval.y = JumpSpeed;
             aud.PlayOneShot(audJump[Random.Range(0, audJump.Length)], audJumpVol);
-            //if (Playerval.y == Vector3.zero.y)
-            //{
-            //    animationController.SetFloat("JumpSpeed", 0);
-            //}
-            //else
-            //{
-
-            //    //reset y velocity
-            //  //  rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            //    animationController.SetFloat("JumpSpeed", 1);
-
-            //}
+        
             if (controller.isGrounded)
             {
                 animationController.SetFloat("JumpSpeed", 0);
@@ -236,9 +225,23 @@ public class Player : MonoBehaviour, IDamage
     public void AirLauncher()
     {
         isAirLauncher = true;
-        animationController.SetBool("airLauncher", true);
-        df.WalkPoint.y += AirLauncherForce;
+        //use a trigger instead of bool 
+        animationController.SetTrigger("airLauncher");
+       
         controller.Move(transform.up * AirLauncherSpeed * Time.deltaTime);
+        //maybe add to update, idk
+        // FIX: OverlapCapsule requires two Vector3 points and a float radius
+        Vector3 point0 = transform.position;
+        Vector3 point1 = transform.position + Vector3.up * 1.5f;
+        float radius = 0.5f;
+        foreach (Collider hit in Physics.OverlapCapsule(point0, point1, radius, enemyLayers2))
+        {
+            NecromancerEnemy necroEnemy = hit.GetComponent<NecromancerEnemy>();
+            if (necroEnemy != null && necroEnemy.airBorne)
+            {
+                necroEnemy.transform.position = new Vector3(necroEnemy.transform.position.x, transform.position.y + AirLauncherForce, necroEnemy.transform.position.z);
+            }
+        }
 
     }
 
