@@ -36,7 +36,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     void Start()
     {
         isPlayingStop = false;
-        colorOrig = Model.material.color;
+     //   colorOrig = Model.material.color;
         GameManger.Instance.updateGameGoal(1);
        rb = GetComponent<Rigidbody>();
     }

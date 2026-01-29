@@ -29,7 +29,7 @@ public class Player : MonoBehaviour, IDamage
     //Header for action moves
 
     [Header("Action Move")]
-    [SerializeField] int AirLauncherForce;
+    public float AirLauncherForce;
     [SerializeField] int AitLauncherdDamage;
     [SerializeField] int AirLauncherSpeed;//to experiment
     [SerializeField] int SimpleCombospeed;
@@ -50,6 +50,8 @@ public class Player : MonoBehaviour, IDamage
     public LayerMask enemyLayers2;
     public bool isStinger;
     public bool isAirLauncher;
+    bool airLauncherActive;
+    bool canMoveUp;
     private bool IsPlayingStop;
     public Vector3 moveDirc;
     SwordDamage sd;
@@ -158,11 +160,11 @@ public class Player : MonoBehaviour, IDamage
             animationController.SetFloat("speed", 1);
         }
 
-        if (isAirLauncher == true)
-        {
-            animationController.SetBool("airLauncher", false);
-            isAirLauncher = false;
-        }
+        //if (isAirLauncher == true)
+        //{
+        //    animationController.SetBool("airLauncher", false);
+        //    isAirLauncher = false;
+        //}
 
 
         if (Input.GetButtonDown("Jump") && jumpcount < JumpMax)
@@ -222,19 +224,60 @@ public class Player : MonoBehaviour, IDamage
         controller.Move(transform.forward * StingerSpeed * Time.deltaTime);
     }
 
-    public void AirLauncher()
+    //public void AirLauncher()
+    //{
+    //    isAirLauncher = true;
+    //    //use a trigger instead of bool 
+    //    animationController.SetTrigger("airLauncher");
+       
+    //    controller.Move(transform.up * AirLauncherSpeed * Time.deltaTime);
+    //    //maybe add to update, idk
+    //    // FIX: OverlapCapsule requires two Vector3 points and a float radius
+    //    Vector3 point0 = transform.position;
+    //    Vector3 point1 = transform.position + Vector3.up * 1.5f;
+    //    float radius = 0.5f;
+    //    foreach (Collider hit in Physics.OverlapCapsule(point0, point1, radius, enemyLayers2))
+    //    {
+    //        NecromancerEnemy necroEnemy = hit.GetComponent<NecromancerEnemy>();
+    //        if (necroEnemy != null && necroEnemy.airBorne)
+    //        {
+    //            necroEnemy.transform.position = new Vector3(necroEnemy.transform.position.x, transform.position.y + AirLauncherForce, necroEnemy.transform.position.z);
+    //        }
+    //    }
+
+    //}
+    
+    public void StartAirLauncher()
     {
         isAirLauncher = true;
+        airLauncherActive = true;
+        canMoveUp = false;
         //use a trigger instead of bool 
         animationController.SetTrigger("airLauncher");
-       
+    
+    }
+     
+    public void ActivateAirLauncherForce()
+    {
+        canMoveUp = true;
+    }
+
+    public void UpdateAirLauncher()
+    {
+      if(!canMoveUp)
+        {
+            return;
+        }
         controller.Move(transform.up * AirLauncherSpeed * Time.deltaTime);
-        //maybe add to update, idk
-        // FIX: OverlapCapsule requires two Vector3 points and a float radius
+     
+    }
+
+    void DragEnemies()
+    {
+        // FIX: OverlapSphere only takes (Vector3 position, float radius, int layerMask)
         Vector3 point0 = transform.position;
-        Vector3 point1 = transform.position + Vector3.up * 1.5f;
         float radius = 0.5f;
-        foreach (Collider hit in Physics.OverlapCapsule(point0, point1, radius, enemyLayers2))
+        foreach (Collider hit in Physics.OverlapSphere(point0, radius, enemyLayers2))
         {
             NecromancerEnemy necroEnemy = hit.GetComponent<NecromancerEnemy>();
             if (necroEnemy != null && necroEnemy.airBorne)
@@ -242,8 +285,15 @@ public class Player : MonoBehaviour, IDamage
                 necroEnemy.transform.position = new Vector3(necroEnemy.transform.position.x, transform.position.y + AirLauncherForce, necroEnemy.transform.position.z);
             }
         }
-
     }
+
+
+
+  public void EndAirLauncher()
+    {
+        isAirLauncher = false;
+    }
+
 
     public void SimpleCombo()
     {
@@ -319,6 +369,8 @@ public class Player : MonoBehaviour, IDamage
         canAcceptNextInput = true;
     }
 
-  
-
+    public float GetVerticalVelocity()
+    {
+      return controller.velocity.y; 
+    }
 }

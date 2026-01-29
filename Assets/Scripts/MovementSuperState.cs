@@ -32,6 +32,7 @@ public class MovementSuperState : PlayerState
         if (Input.GetButtonDown("Air Launcher"))
         {
          player.MoveState = Player.MovementState.laucher;
+            player.StartAirLauncher();
             stateMachine.ChangeState(new CharacterActionMovementSuperState(player, "isUsingActionMove", stateMachine));
         
             return;

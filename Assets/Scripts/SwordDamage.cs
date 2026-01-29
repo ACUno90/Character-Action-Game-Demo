@@ -9,6 +9,7 @@ public class SwordDamage : MonoBehaviour
     public float attackRange = 0.5f;
    public void SwordAttack()
     {
+        Player df = Object.FindFirstObjectByType<Player>();
         Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers);
         foreach (Collider enemy in hitEnemies)
         {
@@ -18,12 +19,18 @@ public class SwordDamage : MonoBehaviour
                 dmg.takeDamage(10);
             }
             Debug.Log("We hit " + enemy.name);
-
-            NecromancerEnemy necro = enemy.GetComponent<NecromancerEnemy>();
-            if (necro != null && !necro.airBorne)
+            // add if check here if we do it and hit here launch enemy up
+           
+            if (df.isAirLauncher)
             {
-               necro.Launch(20f);
+               NecromancerEnemy nerco = enemy.GetComponent<NecromancerEnemy>(); 
+                if(nerco != null)
+                {
+                    nerco.StartAirFollow(df);
+                }
             }
+          
+          
         }
     }
 

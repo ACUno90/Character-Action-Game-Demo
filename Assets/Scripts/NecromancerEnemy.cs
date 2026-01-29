@@ -53,13 +53,15 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
     bool isPlayingStop;
     public Animator animationNecroController;
     bool NercroEnemyHurt;
+    bool isFollowingplayer;
+    Player player;
 
     void Start()
     {
 
         GameManger.Instance.updateGameGoal(1);
         rb = GetComponent<Rigidbody>();
-        colorOrig = Model.material.color;
+      //  colorOrig = Model.material.color;
     }
 
     // Update is called once per frame
@@ -83,17 +85,38 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
             Shooting();
 
         }
-        if(!airBorne)return;
-        //check if grounded and if its the ground
-        if (Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit,1f,Ground))
+        //if(!airBorne)return;
+        ////check if grounded and if its the ground
+        //if (Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit,1f,Ground))
+        //{
+        //    EndLaunch();
+        //}
+        //else
+        //{
+        //    rb.AddForce(Vector3.down * NGravity * rb.mass);
+        //}
+
+
+        if(!isFollowingplayer || player == null) return;
+
+        //match player's vertical movement
+       rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.GetVerticalVelocity(), rb.linearVelocity.z);
+
+        if (player.GetVerticalVelocity() <= 0)
         {
-            EndLaunch();
-        }
-        else
-        {
-            rb.AddForce(Vector3.down * NGravity * rb.mass);
+            isFollowingplayer =false;
         }
 
+    }
+    public void StartAirFollow(Player p)
+    {
+        player = p;
+        isFollowingplayer = true;
+        //reset rb velocity
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        //initial launch
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y +player.AirLauncherForce, rb.linearVelocity.z);
     }
 
     public void Launch(float launchForce)
@@ -208,7 +231,7 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
         Agent.enabled = true;
         //reser veclocity so it stops moving and not move infinite
         rb.linearVelocity = Vector3.zero;
-        Debug.Log("Zombie back to normal");
+        Debug.Log("Necromancer back to normal");
 
     }
     public void takeDamage(int amount)

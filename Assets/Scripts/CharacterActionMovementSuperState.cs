@@ -40,7 +40,7 @@ public class CharacterActionMovementSuperState : PlayerState
 
                if(player.MoveState == Player.MovementState.laucher)
                {
-                  player.AirLauncher();
+                  player.UpdateAirLauncher();
 
                   return;
                   }
