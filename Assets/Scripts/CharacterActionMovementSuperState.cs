@@ -33,7 +33,7 @@ public class CharacterActionMovementSuperState : PlayerState
                if(player.MoveState == Player.MovementState.stinger)
                {
                  //player.animationController.SetBool("Stinger", true);
-                  player.StingerMove();
+                  player.UpdateStingerMove();
                   return;
                }
 

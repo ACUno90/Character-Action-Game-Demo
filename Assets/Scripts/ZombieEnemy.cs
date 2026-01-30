@@ -19,7 +19,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     //States
     [SerializeField] float Sightrange;
     bool isinSight;
-
+    Player player;
     [SerializeField] AudioSource Aud;
     [SerializeField] AudioClip ZombiDeath;
     [SerializeField] float AudZombietDeathVol;
@@ -30,7 +30,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     public Animator animationZombieController;
     private Rigidbody rb;
     public float knockbackDuration = 0.5f;
-
+    bool IsFollowingPlayer;
     bool ZombieHurt;
     bool isPlayingStop;
     void Start()
@@ -54,6 +54,27 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         {
             Chase();
         }
+
+        if (!IsFollowingPlayer || player == null) return;
+
+        //match player's vertical movement
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.GetVerticalVelocity(), rb.linearVelocity.z);
+
+        if (player.GetVerticalVelocity() <= 0)
+        {
+            IsFollowingPlayer = false;
+        }
+    }
+
+    public void StartAirFollow(Player p)
+    {
+         player = p;
+        IsFollowingPlayer = true;
+        //reset rb velocity
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        //initial launch
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y + player.AirLauncherForce, rb.linearVelocity.z);
     }
 
     private void OnTriggerEnter(Collider collision)

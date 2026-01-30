@@ -20,13 +20,18 @@ public class SwordDamage : MonoBehaviour
             }
             Debug.Log("We hit " + enemy.name);
             // add if check here if we do it and hit here launch enemy up
-           
+            //use animation event to call this method
             if (df.isAirLauncher)
             {
                NecromancerEnemy nerco = enemy.GetComponent<NecromancerEnemy>(); 
-                if(nerco != null)
+                ZombieEnemy zom = enemy.GetComponent<ZombieEnemy>();    
+                if (nerco != null)
                 {
                     nerco.StartAirFollow(df);
+                }
+                else if (zom != null)
+                {
+                    zom.StartAirFollow(df);
                 }
             }
           

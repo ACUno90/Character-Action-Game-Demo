@@ -24,6 +24,7 @@ public class MovementSuperState : PlayerState
         {
           
             player.MoveState = Player.MovementState.stinger;
+            player.StartStinger();
             stateMachine.ChangeState(new CharacterActionMovementSuperState(player, "isUsingActionMove", stateMachine));
        
             return;

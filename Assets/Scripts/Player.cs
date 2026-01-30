@@ -52,6 +52,7 @@ public class Player : MonoBehaviour, IDamage
     public bool isAirLauncher;
     bool airLauncherActive;
     bool canMoveUp;
+    bool canStingForward;
     private bool IsPlayingStop;
     public Vector3 moveDirc;
     SwordDamage sd;
@@ -144,11 +145,11 @@ public class Player : MonoBehaviour, IDamage
         if (moveDirc == Vector3.zero)
         {
             //idle animation
-            if (isStinger == true)
-            {
-                animationController.SetBool("Stinger", false);
-                isStinger = false;
-            }
+            //if (isStinger == true)
+            //{
+            //    animationController.SetBool("Stinger", false);
+            //    isStinger = false;
+            //}
 
 
             animationController.SetFloat("speed", 0);
@@ -217,10 +218,27 @@ public class Player : MonoBehaviour, IDamage
     }
 
     //Character Action Moves
-    public void StingerMove()
+   
+    public void StartStinger()
     {
         isStinger = true;
-        animationController.SetBool("Stinger", true);
+        canStingForward = false;
+        animationController.SetTrigger("Stinger");
+    }
+
+    public void ActivateStingerForward()
+    {
+        canStingForward = true;
+    }
+
+    public void UpdateStingerMove()
+    {
+        //isStinger = true;
+        //animationController.SetBool("Stinger", true);
+        if(!canStingForward)
+        {
+            return;
+        }
         controller.Move(transform.forward * StingerSpeed * Time.deltaTime);
     }
 
@@ -229,7 +247,7 @@ public class Player : MonoBehaviour, IDamage
     //    isAirLauncher = true;
     //    //use a trigger instead of bool 
     //    animationController.SetTrigger("airLauncher");
-       
+
     //    controller.Move(transform.up * AirLauncherSpeed * Time.deltaTime);
     //    //maybe add to update, idk
     //    // FIX: OverlapCapsule requires two Vector3 points and a float radius
@@ -246,7 +264,7 @@ public class Player : MonoBehaviour, IDamage
     //    }
 
     //}
-    
+
     public void StartAirLauncher()
     {
         isAirLauncher = true;
@@ -272,20 +290,20 @@ public class Player : MonoBehaviour, IDamage
      
     }
 
-    void DragEnemies()
-    {
-        // FIX: OverlapSphere only takes (Vector3 position, float radius, int layerMask)
-        Vector3 point0 = transform.position;
-        float radius = 0.5f;
-        foreach (Collider hit in Physics.OverlapSphere(point0, radius, enemyLayers2))
-        {
-            NecromancerEnemy necroEnemy = hit.GetComponent<NecromancerEnemy>();
-            if (necroEnemy != null && necroEnemy.airBorne)
-            {
-                necroEnemy.transform.position = new Vector3(necroEnemy.transform.position.x, transform.position.y + AirLauncherForce, necroEnemy.transform.position.z);
-            }
-        }
-    }
+    //void DragEnemies()
+    //{
+    //    // FIX: OverlapSphere only takes (Vector3 position, float radius, int layerMask)
+    //    Vector3 point0 = transform.position;
+    //    float radius = 0.5f;
+    //    foreach (Collider hit in Physics.OverlapSphere(point0, radius, enemyLayers2))
+    //    {
+    //        NecromancerEnemy necroEnemy = hit.GetComponent<NecromancerEnemy>();
+    //        if (necroEnemy != null && necroEnemy.airBorne)
+    //        {
+    //            necroEnemy.transform.position = new Vector3(necroEnemy.transform.position.x, transform.position.y + AirLauncherForce, necroEnemy.transform.position.z);
+    //        }
+    //    }
+    //}
 
 
 
