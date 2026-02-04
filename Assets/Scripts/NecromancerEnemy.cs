@@ -55,6 +55,7 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
     bool NercroEnemyHurt;
     bool isFollowingplayer;
     Player player;
+    bool isStingerFollowed;
 
     void Start()
     {
@@ -107,6 +108,10 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
             isFollowingplayer =false;
         }
 
+        if (!isFollowingplayer || player == null) return;
+        //match player's horizontal movement
+        rb.linearVelocity = new Vector3(player.GetHorizontalVelocity(), rb.linearVelocity.y, player.GetHorizontalVelocity());
+
     }
     public void StartAirFollow(Player p)
     {
@@ -138,6 +143,10 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
             Agent.enabled = true;
 
     }
+
+    //Stinger player follow
+
+
 
     private void Shooting()
     {

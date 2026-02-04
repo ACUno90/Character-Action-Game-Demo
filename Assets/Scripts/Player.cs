@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -207,13 +208,17 @@ public class Player : MonoBehaviour, IDamage
 
     IEnumerator Dash()
     {
+        animationController.SetTrigger("Dash");
         dashing = true;
         float startTime = Time.time;
         while (Time.time < startTime + 0.5f)
         {
+            //animationController.SetTrigger("Dash");
             controller.Move(moveDirc * dashspeed * Time.deltaTime);
+         
             yield return null;
         }
+       
         dashing = false;
     }
 
@@ -235,11 +240,16 @@ public class Player : MonoBehaviour, IDamage
     {
         //isStinger = true;
         //animationController.SetBool("Stinger", true);
-        if(!canStingForward)
+        if (!canStingForward)
         {
             return;
         }
         controller.Move(transform.forward * StingerSpeed * Time.deltaTime);
+    }
+
+    public void EndStinger()
+    {
+        isStinger = false;
     }
 
     //public void AirLauncher()
@@ -390,5 +400,10 @@ public class Player : MonoBehaviour, IDamage
     public float GetVerticalVelocity()
     {
       return controller.velocity.y; 
+    }
+
+    public float GetHorizontalVelocity()
+    {
+        return new Vector3(controller.velocity.x, 0, controller.velocity.z).magnitude;
     }
 }
