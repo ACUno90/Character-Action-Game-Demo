@@ -112,7 +112,7 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
         //match player's horizontal movement
         rb.linearVelocity = new Vector3(player.GetHorizontalVelocity(), rb.linearVelocity.y, player.GetHorizontalVelocity());
 
-    }
+    } 
     public void StartAirFollow(Player p)
     {
         player = p;
