@@ -59,12 +59,25 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         if (!IsFollowingPlayer || player == null) return;
 
         //match player's horizontal movement
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.GetHorizontalVelocity(), rb.linearVelocity.z);
+        rb.linearVelocity = new Vector3(player.GetHorizontalVelocity(),rb.linearVelocity.y , player.GetHorizontalVelocity());
 
         if (player.GetHorizontalVelocity() <= 0)
         {
             IsFollowingPlayer = false;
         }
+
+
+      
+
+        if(!isFoleingStingPlayerZ|| player == null) return;
+        //match player's vertical movement
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.GetVerticalVelocity(), rb.linearVelocity.z);
+
+        if (player.GetVerticalVelocity() <= 0)
+        {
+            isFoleingStingPlayerZ = false;
+        }
+
     }
 
     public void StartStingFollow(Player p)
