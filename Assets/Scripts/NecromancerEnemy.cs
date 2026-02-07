@@ -54,6 +54,7 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
     public Animator animationNecroController;
     bool NercroEnemyHurt;
     bool isFollowingplayer;
+    bool isFollwingStingPlayer;
     Player player;
     bool isStingerFollowed;
 
@@ -86,19 +87,19 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
             Shooting();
 
         }
-        //if(!airBorne)return;
-        ////check if grounded and if its the ground
-        //if (Physics.Raycast(transform.position,Vector3.down,out RaycastHit hit,1f,Ground))
-        //{
-        //    EndLaunch();
-        //}
-        //else
-        //{
-        //    rb.AddForce(Vector3.down * NGravity * rb.mass);
-        //}
+        if (!airBorne) return;
+        //check if grounded and if its the ground
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1f, Ground))
+        {
+            EndLaunch();
+        }
+        else
+        {
+            rb.AddForce(Vector3.down * NGravity * rb.mass);
+        }
 
 
-        if(!isFollowingplayer || player == null) return;
+        if (!isFollowingplayer || player == null) return;
 
         //match player's vertical movement
        rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.GetVerticalVelocity(), rb.linearVelocity.z);
@@ -124,20 +125,31 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y +player.AirLauncherForce, rb.linearVelocity.z);
     }
 
-    public void Launch(float launchForce)
+    public void StartStingFollow(Player p)
     {
-       // rb.AddForce(Vector3.up * launchForce, ForceMode.Impulse);
-       airBorne = true;
-      //add launchForce to y velocity
-       rb.linearVelocity = new Vector3(rb.linearVelocity.x, launchForce, rb.linearVelocity.z);
-   //turn off navmesh agent
-           if (Agent !=null)
-            Agent.enabled = false;
- 
+        player = p;
+        isFollwingStingPlayer = true;
+        //reset rb velocity
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        //initial launch
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x +player.StingerSpeed, rb.linearVelocity.y, rb.linearVelocity.z);
     }
+
+    // public void Launch(float launchForce)
+    // {
+    //    // rb.AddForce(Vector3.up * launchForce, ForceMode.Impulse);
+    //    airBorne = true;
+    //   //add launchForce to y velocity
+    //    rb.linearVelocity = new Vector3(rb.linearVelocity.x, launchForce, rb.linearVelocity.z);
+    ////turn off navmesh agent
+    //        if (Agent !=null)
+    //         Agent.enabled = false;
+
+    // }
     public void EndLaunch()
     {
-               airBorne = false;
+               //airBorne = false;
         //re-enable navmesh agent
         if (Agent != null)
             Agent.enabled = true;

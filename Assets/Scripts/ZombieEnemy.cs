@@ -31,6 +31,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     private Rigidbody rb;
     public float knockbackDuration = 0.5f;
     bool IsFollowingPlayer;
+    bool isFoleingStingPlayerZ;
     bool ZombieHurt;
     bool isPlayingStop;
     void Start()
@@ -57,24 +58,45 @@ public class ZombieEnemy : MonoBehaviour, IDamage
 
         if (!IsFollowingPlayer || player == null) return;
 
-        //match player's vertical movement
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.GetVerticalVelocity(), rb.linearVelocity.z);
+        //match player's horizontal movement
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.GetHorizontalVelocity(), rb.linearVelocity.z);
 
-        if (player.GetVerticalVelocity() <= 0)
+        if (player.GetHorizontalVelocity() <= 0)
         {
             IsFollowingPlayer = false;
         }
     }
 
-    public void StartAirFollow(Player p)
+    public void StartStingFollow(Player p)
     {
          player = p;
         IsFollowingPlayer = true;
         //reset rb velocity
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
+        //initial drag enemy with stinger horizontaly 
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x +player.StingerSpeed, rb.linearVelocity.y, rb.linearVelocity.z);
+    }
+
+    public void StartAirFollow(Player p)
+    {
+        player = p;
+        isFoleingStingPlayerZ = true;
+        //reset rb velocity
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
         //initial launch
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y + player.AirLauncherForce, rb.linearVelocity.z);
+    }
+
+
+    public void EndStingFollow()
+    {
+      
+        //re-enable navmesh agent
+        if (agent != null)
+            agent.enabled = true;
+
     }
 
     private void OnTriggerEnter(Collider collision)

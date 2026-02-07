@@ -23,8 +23,8 @@ public class SwordDamage : MonoBehaviour
             //use animation event to call this method
             if (df.isAirLauncher)
             {
-               NecromancerEnemy nerco = enemy.GetComponent<NecromancerEnemy>(); 
-                ZombieEnemy zom = enemy.GetComponent<ZombieEnemy>();    
+                NecromancerEnemy nerco = enemy.GetComponent<NecromancerEnemy>();
+                ZombieEnemy zom = enemy.GetComponent<ZombieEnemy>();
                 if (nerco != null)
                 {
                     nerco.StartAirFollow(df);
@@ -34,8 +34,22 @@ public class SwordDamage : MonoBehaviour
                     zom.StartAirFollow(df);
                 }
             }
-          
-          
+
+            if (df.isStinger)
+            {
+                NecromancerEnemy nerco = enemy.GetComponent<NecromancerEnemy>();
+                ZombieEnemy zom = enemy.GetComponent<ZombieEnemy>();
+                if (nerco != null)
+                {
+                    nerco.StartStingFollow(df);
+                }
+                else if (zom != null)
+                {
+                    zom.StartStingFollow(df);
+                }
+
+
+            }
         }
     }
 
