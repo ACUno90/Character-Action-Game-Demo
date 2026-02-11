@@ -88,7 +88,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         //initial drag enemy with stinger horizontaly 
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x +player.StingerSpeed, rb.linearVelocity.y, rb.linearVelocity.z);
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x +player.StingerForce, rb.linearVelocity.y, rb.linearVelocity.z);
     }
 
     public void StartAirFollow(Player p)

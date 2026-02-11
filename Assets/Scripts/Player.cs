@@ -36,7 +36,7 @@ public class Player : MonoBehaviour, IDamage
     [SerializeField] int SimpleCombospeed;
     [SerializeField] int SimpleComboDamage;
     [SerializeField] public int StingerSpeed;//to experiment
-    [SerializeField] int StingerDamage;
+  public float StingerForce;
 
 
     [Header("Sounds")]
@@ -47,6 +47,12 @@ public class Player : MonoBehaviour, IDamage
     [SerializeField] float audHurtVol;
     [SerializeField] AudioClip[] audWalk;
     [SerializeField] float audWalkVol;
+    [SerializeField] AudioClip audSword;
+    [SerializeField] float audSwordVol;
+    [SerializeField] AudioClip audStinger;
+    [SerializeField] float audStingVol;
+     [SerializeField] AudioClip audLauncher;
+    [SerializeField] float audLauncherVol;
 
     public LayerMask enemyLayers2;
     public bool isStinger;
@@ -244,36 +250,18 @@ public class Player : MonoBehaviour, IDamage
         {
             return;
         }
+
         controller.Move(transform.forward * StingerSpeed * Time.deltaTime);
+        aud.PlayOneShot(audStinger, audStingVol);
     }
 
     public void EndStinger()
     {
+      
         isStinger = false;
     }
 
-    //public void AirLauncher()
-    //{
-    //    isAirLauncher = true;
-    //    //use a trigger instead of bool 
-    //    animationController.SetTrigger("airLauncher");
 
-    //    controller.Move(transform.up * AirLauncherSpeed * Time.deltaTime);
-    //    //maybe add to update, idk
-    //    // FIX: OverlapCapsule requires two Vector3 points and a float radius
-    //    Vector3 point0 = transform.position;
-    //    Vector3 point1 = transform.position + Vector3.up * 1.5f;
-    //    float radius = 0.5f;
-    //    foreach (Collider hit in Physics.OverlapCapsule(point0, point1, radius, enemyLayers2))
-    //    {
-    //        NecromancerEnemy necroEnemy = hit.GetComponent<NecromancerEnemy>();
-    //        if (necroEnemy != null && necroEnemy.airBorne)
-    //        {
-    //            necroEnemy.transform.position = new Vector3(necroEnemy.transform.position.x, transform.position.y + AirLauncherForce, necroEnemy.transform.position.z);
-    //        }
-    //    }
-
-    //}
 
     public void StartAirLauncher()
     {
@@ -296,24 +284,10 @@ public class Player : MonoBehaviour, IDamage
         {
             return;
         }
+  
         controller.Move(transform.up * AirLauncherSpeed * Time.deltaTime);
-     
+        aud.PlayOneShot(audLauncher, audLauncherVol);
     }
-
-    //void DragEnemies()
-    //{
-    //    // FIX: OverlapSphere only takes (Vector3 position, float radius, int layerMask)
-    //    Vector3 point0 = transform.position;
-    //    float radius = 0.5f;
-    //    foreach (Collider hit in Physics.OverlapSphere(point0, radius, enemyLayers2))
-    //    {
-    //        NecromancerEnemy necroEnemy = hit.GetComponent<NecromancerEnemy>();
-    //        if (necroEnemy != null && necroEnemy.airBorne)
-    //        {
-    //            necroEnemy.transform.position = new Vector3(necroEnemy.transform.position.x, transform.position.y + AirLauncherForce, necroEnemy.transform.position.z);
-    //        }
-    //    }
-    //}
 
 
 
@@ -334,19 +308,23 @@ public class Player : MonoBehaviour, IDamage
         AnimatorStateInfo AStates = animationController.GetCurrentAnimatorStateInfo(0);
         if (AStates.IsName("HumanM@Idle01"))
         {
+            aud.PlayOneShot(audSword, audSwordVol);
+
             noOfClicks = 1;
             animationController.SetTrigger("SwordAttack");
-           // df.ApplyKnockback(df.transform.forward, 70f);
+            // df.ApplyKnockback(df.transform.forward, 70f);
             return;
         }
         else if (AStates.IsName("slash1"))
         {
+            aud.PlayOneShot(audSword, audSwordVol);
             noOfClicks = 2;
             animationController.SetTrigger("SwordAttack2");
             return;
         }
         else if (AStates.IsName("slash2"))
         {
+            aud.PlayOneShot(audSword, audSwordVol);
             noOfClicks = 3;
             animationController.SetTrigger("SwordAttack3");
             //df.ApplyKnockback(transform.forward, 70f);
@@ -404,6 +382,6 @@ public class Player : MonoBehaviour, IDamage
 
     public float GetHorizontalVelocity()
     {
-        return new Vector3(controller.velocity.x, 0, controller.velocity.z).magnitude;
+        return controller.velocity.x;
     }
 }

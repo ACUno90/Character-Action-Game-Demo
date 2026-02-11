@@ -87,31 +87,36 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
             Shooting();
 
         }
-        if (!airBorne) return;
-        //check if grounded and if its the ground
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1f, Ground))
-        {
-            EndLaunch();
-        }
-        else
-        {
-            rb.AddForce(Vector3.down * NGravity * rb.mass);
-        }
+        //if (!airBorne) return;
+        ////check if grounded and if its the ground
+        //if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1f, Ground))
+        //{
+        //    EndLaunch();
+        //}
+        //else
+        //{
+        //    rb.AddForce(Vector3.down * NGravity * rb.mass);
+        //}
 
 
         if (!isFollowingplayer || player == null) return;
 
         //match player's vertical movement
-       rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.GetVerticalVelocity(), rb.linearVelocity.z);
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.GetVerticalVelocity(), rb.linearVelocity.z);
 
         if (player.GetVerticalVelocity() <= 0)
         {
-            isFollowingplayer =false;
+            isFollowingplayer = false;
         }
-
-        if (!isFollowingplayer || player == null) return;
+        //separetly for stinger follow so it can follow horizontal movement while not following vertical movement if its stinger follow
+        if (!isFollwingStingPlayer || player == null) return;
         //match player's horizontal movement
         rb.linearVelocity = new Vector3(player.GetHorizontalVelocity(), rb.linearVelocity.y, player.GetHorizontalVelocity());
+
+        if(player.GetHorizontalVelocity() <= 0)
+        {
+            isFollwingStingPlayer = false;
+        }
 
     } 
     public void StartAirFollow(Player p)
@@ -133,7 +138,7 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         //initial launch
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x +player.StingerSpeed, rb.linearVelocity.y, rb.linearVelocity.z);
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x +player.StingerForce, rb.linearVelocity.y, rb.linearVelocity.z+ player.StingerForce);
     }
 
     // public void Launch(float launchForce)

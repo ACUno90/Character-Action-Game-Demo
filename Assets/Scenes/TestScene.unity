@@ -861,7 +861,7 @@ Rigidbody:
   serializedVersion: 5
   m_Mass: 1
   m_LinearDamping: 0
-  m_AngularDamping: 1
+  m_AngularDamping: 15
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -2852,7 +2852,7 @@ MonoBehaviour:
   SimpleCombospeed: 0
   SimpleComboDamage: 0
   StingerSpeed: 40
-  StingerDamage: 20
+  StingerForce: 10
   aud: {fileID: 456032269}
   audJump:
   - {fileID: 8300000, guid: 6317c7cfcb9a9b84f9a93070fcf9cd3b, type: 3}
@@ -2878,6 +2878,12 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 542c6de8290f468499c26feb62eafe6e, type: 3}
   - {fileID: 8300000, guid: da883120e7a25c540b74cbcc8101867a, type: 3}
   audWalkVol: 0.5
+  audSword: {fileID: 8300000, guid: 8488982eec6d7cf4a832686608d47650, type: 3}
+  audSwordVol: 0.5
+  audStinger: {fileID: 8300000, guid: 0c1228bef25ebd9448afd8361f2ac496, type: 3}
+  audStingVol: 0.5
+  audLauncher: {fileID: 8300000, guid: ff6de26ff8088c347be891f08c1e8c92, type: 3}
+  audLauncherVol: 0.5
   enemyLayers2:
     serializedVersion: 2
     m_Bits: 512
@@ -2924,7 +2930,7 @@ Transform:
   m_GameObject: {fileID: 456032263}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -103.89, y: 3.89, z: 9.72}
+  m_LocalPosition: {x: -103.89, y: 5.35, z: 9.72}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7154,7 +7160,7 @@ Rigidbody:
   serializedVersion: 5
   m_Mass: 1
   m_LinearDamping: 0
-  m_AngularDamping: 1
+  m_AngularDamping: 15
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
