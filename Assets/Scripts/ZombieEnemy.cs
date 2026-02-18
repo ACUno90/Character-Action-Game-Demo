@@ -34,6 +34,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     bool isFoleingStingPlayerZ;
     bool ZombieHurt;
     bool isPlayingStop;
+    bool IsZDead;
     void Start()
     {
         isPlayingStop = false;
@@ -45,6 +46,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
 
     void Update()
     {
+        if(IsZDead) return;
         isinSight = Physics.CheckSphere(transform.position, Sightrange, WherePlayer);
         if (!isinSight)
         {
@@ -56,26 +58,28 @@ public class ZombieEnemy : MonoBehaviour, IDamage
             Chase();
         }
 
-        if (!IsFollowingPlayer || player == null) return;
-
-        //match player's horizontal movement
-        rb.linearVelocity = new Vector3(player.GetHorizontalVelocity(),rb.linearVelocity.y , player.GetHorizontalVelocity());
-
-        if (player.GetHorizontalVelocity() <= 0)
+        // horizontal follow: only run when following horizontally and player available
+        if (IsFollowingPlayer && player != null)
         {
-            IsFollowingPlayer = false;
+            // match player's horizontal movement
+            rb.linearVelocity = new Vector3(player.GetHorizontalVelocity(), rb.linearVelocity.y, player.GetHorizontalVelocity());
+
+            if (player.GetHorizontalVelocity() <= 0)
+            {
+                IsFollowingPlayer = false;
+            }
         }
 
-
-      
-
-        if(!isFoleingStingPlayerZ|| player == null) return;
-        //match player's vertical movement
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.GetVerticalVelocity(), rb.linearVelocity.z);
-
-        if (player.GetVerticalVelocity() <= 0)
+        // vertical follow: separate check so it won't be affected by horizontal logic
+        if (isFoleingStingPlayerZ && player != null)
         {
-            isFoleingStingPlayerZ = false;
+            // match player's vertical movement
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.GetVerticalVelocity(), rb.linearVelocity.z);
+
+            if (player.GetVerticalVelocity() <= 0)
+            {
+                isFoleingStingPlayerZ = false;
+            }
         }
 
     }
@@ -88,7 +92,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         //initial drag enemy with stinger horizontaly 
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x +player.StingerForce, rb.linearVelocity.y, rb.linearVelocity.z);
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x +player.StingerSpeed, rb.linearVelocity.y, rb.linearVelocity.z);
     }
 
     public void StartAirFollow(Player p)
@@ -167,6 +171,13 @@ public class ZombieEnemy : MonoBehaviour, IDamage
             animationZombieController.SetTrigger("ZombieDeath");
             //  Destroy(gameObject);
             Debug.Log("ZombieDead as hell" );
+           IsZDead = true;
+            if (agent != null) agent.enabled = false;
+            rb.isKinematic = true;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            // schedule destroy
+            Destroy(gameObject, 3f);
 
         }
         //animationZombieController.SetBool("ZombieHit", false);

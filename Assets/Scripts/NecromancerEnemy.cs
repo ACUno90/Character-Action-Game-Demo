@@ -24,6 +24,11 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
     public float NGravity =20f;
     Color colorOrig;
     bool Isshooting;
+    [Header("Follow Tuning")]
+    [SerializeField] float followLerp = 10f;
+    [SerializeField] float verticalLerp = 8f;
+    [SerializeField] float stingerStopDistance = 1f;
+    [SerializeField] float airStopDistance = 0.5f;
 
     //Patroling
     [Header("Patroll")]
@@ -57,6 +62,7 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
     bool isFollwingStingPlayer;
     Player player;
     bool isStingerFollowed;
+    bool isNDead;
 
     void Start()
     {
@@ -69,6 +75,7 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
     // Update is called once per frame
     void Update()
     {
+        if (isNDead) return;
         isinSight = Physics.CheckSphere(transform.position, Sightrange, WherePlayer); // checks how far it can see the player and what you want to put im for it
         isinRange = Physics.CheckSphere(transform.position, Shootrange, WherePlayer); //Checks how far it can shoot the player and what you want to put im for it
 
@@ -99,26 +106,52 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
         //}
 
 
-        if (!isFollowingplayer || player == null) return;
-
-        //match player's vertical movement
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.GetVerticalVelocity(), rb.linearVelocity.z);
-
-        if (player.GetVerticalVelocity() <= 0)
+        // Stinger follow: actively steer toward player's horizontal position for tighter tracking
+        if (isFollwingStingPlayer && player != null)
         {
-            isFollowingplayer = false;
+            Vector3 toPlayer = player.transform.position - transform.position;
+            Vector3 horizontalDir = new Vector3(toPlayer.x, 0f, toPlayer.z);
+            float sqrDist = horizontalDir.sqrMagnitude;
+            // stop following when close enough
+            if (sqrDist <= stingerStopDistance * stingerStopDistance)
+            {
+                isFollwingStingPlayer = false;
+            }
+            else if (sqrDist > 0.001f)
+            {
+                horizontalDir.Normalize();
+                // use AddForce for more physics-driven response
+                Vector3 desired = horizontalDir * player.StingerForce;
+                // compute required change in velocity and apply as velocity change force
+                Vector3 currentHorizontal = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+                Vector3 neededChange = desired - currentHorizontal;
+                // apply force as VelocityChange for immediate effect, scaled by followLerp for tuning
+                rb.AddForce(neededChange * followLerp, ForceMode.VelocityChange);
+            }
         }
-        //separetly for stinger follow so it can follow horizontal movement while not following vertical movement if its stinger follow
-        if (!isFollwingStingPlayer || player == null) return;
-        //match player's horizontal movement
-        rb.linearVelocity = new Vector3(player.GetHorizontalVelocity(), rb.linearVelocity.y, player.GetHorizontalVelocity());
 
-        if(player.GetHorizontalVelocity() <= 0)
+        // Air launcher follow: track vertical movement toward player's height
+        if (isFollowingplayer && player != null)
         {
-            isFollwingStingPlayer = false;
+            float toPlayerY = player.transform.position.y - transform.position.y;
+            float distY = Mathf.Abs(toPlayerY);
+            if (distY <= airStopDistance)
+            {
+                isFollowingplayer = false;
+            }
+            else
+            {
+                // desired vertical velocity to close the height gap
+                float desiredY = Mathf.Clamp(toPlayerY, -player.AirLauncherForce, player.AirLauncherForce);
+                float newY = Mathf.Lerp(rb.linearVelocity.y, desiredY, Time.deltaTime * verticalLerp);
+                float neededChangeY = newY - rb.linearVelocity.y;
+                rb.AddForce(Vector3.up * neededChangeY, ForceMode.VelocityChange);
+            }
         }
 
-    } 
+
+
+    }
     public void StartAirFollow(Player p)
     {
         player = p;
@@ -126,8 +159,8 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
         //reset rb velocity
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        //initial launch
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y +player.AirLauncherForce, rb.linearVelocity.z);
+        // initial upward impulse
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.AirLauncherForce, rb.linearVelocity.z);
     }
 
     public void StartStingFollow(Player p)
@@ -137,8 +170,14 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
         //reset rb velocity
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        //initial launch
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x +player.StingerForce, rb.linearVelocity.y, rb.linearVelocity.z+ player.StingerForce);
+        // initial horizontal impulse toward player's current position for a tighter stinger
+        Vector3 toPlayer = (player.transform.position - transform.position);
+        Vector3 horizontalDir = new Vector3(toPlayer.x, 0f, toPlayer.z);
+        if (horizontalDir.sqrMagnitude > 0.001f)
+        {
+            horizontalDir.Normalize();
+            rb.linearVelocity = new Vector3(horizontalDir.x * player.StingerForce, rb.linearVelocity.y, horizontalDir.z * player.StingerForce);
+        }
     }
 
     // public void Launch(float launchForce)
@@ -277,8 +316,14 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
             GameManger.Instance.updateGameGoal(-1);
             animationNecroController.SetTrigger("NercoDie");
             Debug.Log("Necromancer dead" );
-
-            // Destroy(gameObject);
+            // stop movement and disable agent/physics
+            isNDead = true;
+            if (Agent != null) Agent.enabled = false;
+            rb.isKinematic = true;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            // schedule destroy
+            Destroy(gameObject, 3f);
         }
         //  animationNecroController.SetBool("GotHitN", false);
         ApplyKnockbackNercro(-transform.forward, 2f);
