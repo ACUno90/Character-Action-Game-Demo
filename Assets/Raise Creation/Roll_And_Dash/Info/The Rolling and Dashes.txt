@@ -1,0 +1,16 @@
+The Rolling and Dashes Animation Pack
+
+Enhance your characters with dynamic and versatile roll and dash animations, perfect for action, adventure, and combat scenarios. This pack includes 46 unique animations that bring energy and fluidity to your projects, adaptable to any character.
+
+Animation Collection Includes:
+Dashes (22 Total):
+
+    Forward Dash: 12 variations
+    Right Dash: 5 variations
+    Left Dash: 5 variations
+
+Rolling (24 Total):
+
+    Forward Rolling: 15 variations
+    Backward Rolling: 6 variations
+    Side Rolling (Right/Left): 2 variations
