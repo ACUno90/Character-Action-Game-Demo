@@ -15,11 +15,11 @@ public class GameManger : MonoBehaviour
     [SerializeField] GameObject Menu_Pause;
     [SerializeField] GameObject Menu_Lose;
     [Header("Style Meter")]
-    [SerializeField] GameObject DopeImage;
-    [SerializeField] GameObject CrazyImage;
-    [SerializeField] GameObject BallerImage;
-    [SerializeField] GameObject AwesomeSauceImage;
-    [SerializeField] GameObject SupremeImage;
+    [SerializeField] Image DopeImage;
+    [SerializeField] Image CrazyImage;
+    [SerializeField] Image BallerImage;
+    [SerializeField] Image AwesomeSauceImage;
+  //  [SerializeField] Image SupremeImage;
 
 
 
@@ -29,7 +29,7 @@ public class GameManger : MonoBehaviour
     public static GameManger Instance;
     public GameObject Player;
     public Player PlayerScript;
-    public GameObject DMG_Screen;
+    public Image DMG_Screen;
     public Image Player_HP_Bar;
     public Image PlayerHealthColor;
     public Slider slider;
