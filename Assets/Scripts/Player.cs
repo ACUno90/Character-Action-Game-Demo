@@ -257,8 +257,13 @@ public class Player : MonoBehaviour, IDamage
 
     public void EndStinger()
     {
-      
         isStinger = false;
+        // release any enemies stuck to the sword's stick point
+        SwordDamage sd = GetComponentInChildren<SwordDamage>();
+        if (sd != null)
+        {
+            sd.ReleaseStuckEnemies();
+        }
     }
 
 

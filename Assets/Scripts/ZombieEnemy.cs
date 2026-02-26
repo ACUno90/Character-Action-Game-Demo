@@ -9,6 +9,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     public int damage;
     [SerializeField] Renderer Model;
     [SerializeField] int HP;
+    [SerializeField] LayerMask IgnoreEnemy;
     [SerializeField] NavMeshAgent agent;
     public LayerMask Ground, WherePlayer;
     //Patroling
@@ -84,15 +85,29 @@ public class ZombieEnemy : MonoBehaviour, IDamage
 
     }
 
-    public void StartStingFollow(Player p)
+    public void StartStingFollow(Player p, Transform stickPoint)
     {
          player = p;
-        IsFollowingPlayer = true;
         //reset rb velocity
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        //initial drag enemy with stinger horizontaly 
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x +player.StingerSpeed, rb.linearVelocity.y, rb.linearVelocity.z);
+        // if a stickPoint is provided, attach to it
+        if (stickPoint != null)
+        {
+            if (agent != null) agent.enabled = false;
+            rb.isKinematic = true;
+            transform.SetParent(stickPoint, false);
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+            IsFollowingPlayer = false;
+            isFoleingStingPlayerZ = false;
+        }
+        else
+        {
+            // initial horizontal impulse
+            IsFollowingPlayer = true;
+            rb.AddForce(transform.forward * player.StingerSpeed, ForceMode.VelocityChange);
+        }
     }
 
     public void StartAirFollow(Player p)
@@ -113,6 +128,11 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         //re-enable navmesh agent
         if (agent != null)
             agent.enabled = true;
+        IsFollowingPlayer = true;
+       isFoleingStingPlayerZ = true;
+        //detach from player
+        transform.SetParent(null);
+
 
     }
 

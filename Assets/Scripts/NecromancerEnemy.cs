@@ -9,6 +9,7 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
     [Header("Basics")]
     [SerializeField] NavMeshAgent Agent;
     [SerializeField] int HP;
+    [SerializeField] LayerMask IgnoreEnemy;
     [SerializeField] Renderer Model;
     [SerializeField] Transform headPos;
     public LayerMask Ground, WherePlayer;
@@ -63,6 +64,8 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
     Player player;
     bool isStingerFollowed;
     bool isNDead;
+    private bool isStingerAttached;
+    private Transform stingerAttachPoint;
 
     void Start()
     {
@@ -94,16 +97,7 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
             Shooting();
 
         }
-        //if (!airBorne) return;
-        ////check if grounded and if its the ground
-        //if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 1f, Ground))
-        //{
-        //    EndLaunch();
-        //}
-        //else
-        //{
-        //    rb.AddForce(Vector3.down * NGravity * rb.mass);
-        //}
+    
 
 
         // Stinger follow: actively steer toward player's horizontal position for tighter tracking
@@ -163,21 +157,69 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.AirLauncherForce, rb.linearVelocity.z);
     }
 
-    public void StartStingFollow(Player p)
+    public void StartStingFollow(Player p, Transform stickPoint)
     {
         player = p;
-        isFollwingStingPlayer = true;
-        //reset rb velocity
+        // reset velocities
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        // initial horizontal impulse toward player's current position for a tighter stinger
-        Vector3 toPlayer = (player.transform.position - transform.position);
-        Vector3 horizontalDir = new Vector3(toPlayer.x, 0f, toPlayer.z);
-        if (horizontalDir.sqrMagnitude > 0.001f)
+
+        if (stickPoint != null)
         {
-            horizontalDir.Normalize();
-            rb.linearVelocity = new Vector3(horizontalDir.x * player.StingerForce, rb.linearVelocity.y, horizontalDir.z * player.StingerForce);
+            //// immediately attach to the provided stick point
+            //isStingerAttached = true;
+            //if (Agent != null) Agent.enabled = false;
+            //rb.isKinematic = true;
+            //// snap to stick point and remember it for per-frame alignment
+            //stingerAttachPoint = stickPoint;
+            //transform.SetParent(null);
+            //transform.position = stingerAttachPoint.position;
+            //transform.rotation = stingerAttachPoint.rotation;
+
+            if (Agent != null) Agent.enabled = false;
+            rb.isKinematic = true;
+            transform.SetParent(stickPoint, false);
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+            isFollwingStingPlayer = false;
+            isFollowingplayer = false;
+            isStingerAttached = true;
         }
+        else
+        {
+            // follow horizontally toward player
+            isFollwingStingPlayer = true;
+            Vector3 toPlayer = (player.transform.position - transform.position);
+            Vector3 horizontalDir = new Vector3(toPlayer.x, 0f, toPlayer.z);
+            if (horizontalDir.sqrMagnitude > 0.001f)
+            {
+                horizontalDir.Normalize();
+                rb.AddForce(new Vector3(horizontalDir.x * player.StingerForce, 0f, horizontalDir.z * player.StingerForce), ForceMode.VelocityChange);
+            }
+        }
+    }
+    //add this as a end 
+    public void EndStingFollow()
+    {
+        // detach if attached to stick point
+        if (isStingerAttached)
+        {
+            isStingerAttached = false;
+            stingerAttachPoint = null;
+            transform.SetParent(null);
+            rb.isKinematic = false;
+            if (Agent != null) Agent.enabled = true;
+        }
+        // stop following behaviour
+        isFollwingStingPlayer = true;
+        isFollowingplayer= true;
+
+        //re-enable navmesh agent
+        if (Agent != null)
+            Agent.enabled = true;
+
+        //detach from player
+       // transform.SetParent(null);
     }
 
     // public void Launch(float launchForce)

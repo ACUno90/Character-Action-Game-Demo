@@ -576,6 +576,9 @@ MonoBehaviour:
   damage: 0
   Model: {fileID: 108822466}
   HP: 21
+  IgnoreEnemy:
+    serializedVersion: 2
+    m_Bits: 0
   agent: {fileID: 108822469}
   Ground:
     serializedVersion: 2
@@ -1135,6 +1138,9 @@ MonoBehaviour:
   damage: 0
   Model: {fileID: 845805493}
   HP: 100
+  IgnoreEnemy:
+    serializedVersion: 2
+    m_Bits: 0
   agent: {fileID: 122835386}
   Ground:
     serializedVersion: 2
@@ -1601,7 +1607,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &183595544
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3205,6 +3211,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackPoint: {fileID: 1467556780}
+  StickPoint: {fileID: 1711996446}
   enemyLayers:
     serializedVersion: 2
     m_Bits: 512
@@ -3395,7 +3402,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 87963a50f622da6468c8d66c6b6f2f9a, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 86fba3e712ddc38468f84e83f01c1b47, type: 2}
   m_BuildHeightMesh: 0
 --- !u!4 &503456595
 Transform:
@@ -3639,6 +3646,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Agent: {fileID: 510696920}
   HP: 20
+  IgnoreEnemy:
+    serializedVersion: 2
+    m_Bits: 0
   Model: {fileID: 883927417}
   headPos: {fileID: 1010354436}
   Ground:
@@ -3651,7 +3661,7 @@ MonoBehaviour:
   Shotpostion: {fileID: 1734372810}
   Bullet: {fileID: 2082271980986677770, guid: c339bed290febef4f8d6b35f41970f9e, type: 3}
   shootrate: 10
-  shootForce: 0
+  shootForce: 10
   shootUpForce: 0
   airBorne: 0
   NGravity: 20
@@ -4960,6 +4970,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Agent: {fileID: 737899431}
   HP: 20
+  IgnoreEnemy:
+    serializedVersion: 2
+    m_Bits: 0
   Model: {fileID: 175323086814683825}
   headPos: {fileID: 254161689884285079}
   Ground:
@@ -4972,7 +4985,7 @@ MonoBehaviour:
   Shotpostion: {fileID: 1872455651}
   Bullet: {fileID: 2082271980986677770, guid: c339bed290febef4f8d6b35f41970f9e, type: 3}
   shootrate: 10
-  shootForce: 0
+  shootForce: 10
   shootUpForce: 0
   airBorne: 0
   NGravity: 20
@@ -7356,6 +7369,9 @@ MonoBehaviour:
   damage: 0
   Model: {fileID: 8537947921917789862}
   HP: 100
+  IgnoreEnemy:
+    serializedVersion: 2
+    m_Bits: 0
   agent: {fileID: 1125128943}
   Ground:
     serializedVersion: 2
@@ -8622,10 +8638,9 @@ MonoBehaviour:
   Menu_Pause: {fileID: 740591126}
   Menu_Lose: {fileID: 1016608915}
   DopeImage: {fileID: 82842919}
-  CrazyImage: {fileID: 0}
-  BallerImage: {fileID: 0}
-  AwesomeSauceImage: {fileID: 0}
-  SupremeImage: {fileID: 0}
+  CrazyImage: {fileID: 183595545}
+  BallerImage: {fileID: 1300433307}
+  AwesomeSauceImage: {fileID: 1300433307}
   Player: {fileID: 0}
   PlayerScript: {fileID: 0}
   DMG_Screen: {fileID: 0}
@@ -9967,6 +9982,37 @@ Transform:
   - {fileID: 1856821389}
   m_Father: {fileID: 1010354436}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1711996445
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1711996446}
+  m_Layer: 0
+  m_Name: StickStingPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1711996446
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711996445}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.74682164, y: 0.0027237805, z: 0.6647201, w: 0.019932793}
+  m_LocalPosition: {x: -1.7175364, y: -0.00442791, z: 0.005160466}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1802942498}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1713255819
 GameObject:
   m_ObjectHideFlags: 0
@@ -10401,6 +10447,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7280132695639746278, guid: 2d69a205b18030c4d95c5a077580e108, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1467556780}
+    - targetCorrespondingSourceObject: {fileID: 7280132695639746278, guid: 2d69a205b18030c4d95c5a077580e108, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1711996446}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6755681952115177008, guid: 2d69a205b18030c4d95c5a077580e108, type: 3}
       insertIndex: -1
@@ -11747,6 +11796,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Agent: {fileID: 2138841768}
   HP: 20
+  IgnoreEnemy:
+    serializedVersion: 2
+    m_Bits: 0
   Model: {fileID: 2138841771}
   headPos: {fileID: 120838325}
   Ground:
