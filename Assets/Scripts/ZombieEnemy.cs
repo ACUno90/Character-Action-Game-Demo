@@ -39,6 +39,10 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     [Header("Combat")]
     [SerializeField] float attackCooldown = 1.2f;
     float attackTimer = 0f;
+    bool pendingAttack = false;
+    bool hasDealtAttack = false;
+    [SerializeField] float attackRadius = 1f;
+    [SerializeField] Vector3 attackOffset = new Vector3(0.5f, 0.5f, 0f);
     void Start()
     {
         isPlayingStop = false;
@@ -71,8 +75,11 @@ public class ZombieEnemy : MonoBehaviour, IDamage
                 float remaining = agent.remainingDistance;
                 if (!agent.pathPending && remaining <= agent.stoppingDistance + 0.5f)
                 {
-                    // within melee range
-                    MeleeAttack();
+                    // within melee range -> trigger attack if not on cooldown
+                    if (attackTimer <= 0f && !pendingAttack)
+                    {
+                        StartMeleeAttack();
+                    }
                 }
                 else
                 {
@@ -165,15 +172,16 @@ public class ZombieEnemy : MonoBehaviour, IDamage
 
     private void OnTriggerEnter(Collider collision)
     {
-        IDamage hit = collision.GetComponent<IDamage>();
-        if (hit != null) hit.takeDamage(damage);
-        else if (collision.GetComponentInParent<IDamage>() != null)
+        // Only deal damage from trigger collisions if an attack is currently pending
+        if (!pendingAttack) return;
+        if (hasDealtAttack) return;
+
+        Player p = collision.GetComponent<Player>();
+        if (p == null) p = collision.GetComponentInParent<Player>();
+        if (p != null)
         {
-            hit = collision.GetComponentInParent<IDamage>();
-            hit.takeDamage(damage);
-
-
-
+            p.takeDamage(damage);
+            hasDealtAttack = true;
         }
     }
     public void ApplyKnockback(Vector3 direction, float force)
@@ -273,19 +281,25 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     {
         agent.SetDestination(GameManger.Instance.Player.transform.position);
     }
-   void MeleeAttack()
+    // start attack process: trigger animation and mark pending so damage only applies on hit frame
+    void StartMeleeAttack()
     {
-        if (attackTimer > 0f) return;
+        pendingAttack = true;
+        hasDealtAttack = false;
+        // set cooldown so we don't re-trigger immediately
         attackTimer = attackCooldown;
-
-        // play attack animation and
-
         if (animationZombieController != null)
         {
             animationZombieController.SetTrigger("ZombieAttack");
         }
-        // perform a short-range overlap to hit player
-        Collider[] hits = Physics.OverlapSphere(transform.position + transform.forward * 0.5f + Vector3.up * 0.5f, 1f, WherePlayer);
+    }
+
+    // Called from an animation event at the attack hit frame
+    public void OnMeleeAttackHit()
+    {
+        if (!pendingAttack || hasDealtAttack) return;
+        Vector3 center = transform.position + transform.forward * attackOffset.x + Vector3.up * attackOffset.y + transform.right * attackOffset.z;
+        Collider[] hits = Physics.OverlapSphere(center, attackRadius, WherePlayer);
         foreach (var c in hits)
         {
             Player p = c.GetComponent<Player>();
@@ -299,6 +313,14 @@ public class ZombieEnemy : MonoBehaviour, IDamage
                 if (pd != null) pd.takeDamage(damage);
             }
         }
+        hasDealtAttack = true;
+    }
+
+    // Called from an animation event when attack animation ends
+    public void OnMeleeAttackEnd()
+    {
+        pendingAttack = false;
+        hasDealtAttack = false;
     }
 
 
