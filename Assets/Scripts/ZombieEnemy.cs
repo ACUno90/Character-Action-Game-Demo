@@ -36,6 +36,9 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     bool ZombieHurt;
     bool isPlayingStop;
     bool IsZDead;
+    [Header("Combat")]
+    [SerializeField] float attackCooldown = 1.2f;
+    float attackTimer = 0f;
     void Start()
     {
         isPlayingStop = false;
@@ -43,6 +46,8 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         GameManger.Instance.updateGameGoal(1);
        rb = GetComponent<Rigidbody>();
     }
+
+
 
 
     void Update()
@@ -54,9 +59,31 @@ public class ZombieEnemy : MonoBehaviour, IDamage
             Patroling();
 
         }
-        if (isinSight)
+        else // if in sight, either chase or attack depending on distance
         {
-            Chase();
+            // update attack timer
+            attackTimer -= Time.deltaTime;
+
+            // distance to player using NavMeshAgent remaining distance when path is set
+            if (agent != null && agent.isOnNavMesh)
+            {
+                agent.SetDestination(GameManger.Instance.Player.transform.position);
+                float remaining = agent.remainingDistance;
+                if (!agent.pathPending && remaining <= agent.stoppingDistance + 0.5f)
+                {
+                    // within melee range
+                    MeleeAttack();
+                }
+                else
+                {
+                    // not in attack range yet
+                    Chase();
+                }
+            }
+            else
+            {
+                Chase();
+            }
         }
 
         // horizontal follow: only run when following horizontally and player available
@@ -246,6 +273,34 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     {
         agent.SetDestination(GameManger.Instance.Player.transform.position);
     }
+   void MeleeAttack()
+    {
+        if (attackTimer > 0f) return;
+        attackTimer = attackCooldown;
+
+        // play attack animation and
+
+        if (animationZombieController != null)
+        {
+            animationZombieController.SetTrigger("ZombieAttack");
+        }
+        // perform a short-range overlap to hit player
+        Collider[] hits = Physics.OverlapSphere(transform.position + transform.forward * 0.5f + Vector3.up * 0.5f, 1f, WherePlayer);
+        foreach (var c in hits)
+        {
+            Player p = c.GetComponent<Player>();
+            if (p != null)
+            {
+                p.takeDamage(damage);
+            }
+            else
+            {
+                var pd = c.GetComponentInParent<Player>();
+                if (pd != null) pd.takeDamage(damage);
+            }
+        }
+    }
+
 
     IEnumerator playSteps()
     {

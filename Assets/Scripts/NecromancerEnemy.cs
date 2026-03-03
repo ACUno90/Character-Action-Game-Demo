@@ -206,20 +206,20 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
         {
             isStingerAttached = false;
             stingerAttachPoint = null;
-            transform.SetParent(null);
+          transform.SetParent(null);
             rb.isKinematic = false;
             if (Agent != null) Agent.enabled = true;
         }
-        // stop following behaviour
-        isFollwingStingPlayer = true;
-        isFollowingplayer= true;
+        //// stop following behaviour
+        //isFollwingStingPlayer = true;
+        //isFollowingplayer= true;
 
-        //re-enable navmesh agent
-        if (Agent != null)
-            Agent.enabled = true;
+        ////re-enable navmesh agent
+        //if (Agent != null)
+        //    Agent.enabled = true;
 
         //detach from player
-       // transform.SetParent(null);
+      ///  transform.SetParent(null);
     }
 
     // public void Launch(float launchForce)
