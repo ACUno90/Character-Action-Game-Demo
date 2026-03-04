@@ -47,6 +47,8 @@ public class Player : MonoBehaviour, IDamage
     [SerializeField] float audHurtVol;
     [SerializeField] AudioClip[] audWalk;
     [SerializeField] float audWalkVol;
+    [SerializeField] AudioClip audDash;
+    [SerializeField] float audDashVol;
     [SerializeField] AudioClip audSword;
     [SerializeField] float audSwordVol;
     [SerializeField] AudioClip audStinger;
@@ -220,6 +222,7 @@ public class Player : MonoBehaviour, IDamage
         while (Time.time < startTime + 0.5f)
         {
             //animationController.SetTrigger("Dash");
+            aud.PlayOneShot(audDash, audDashVol);
             controller.Move(moveDirc * dashspeed * Time.deltaTime);
          
             yield return null;
