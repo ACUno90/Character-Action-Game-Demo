@@ -589,6 +589,10 @@ MonoBehaviour:
   WalkPoint: {x: 0, y: 0, z: 0}
   walkpointRange: 30
   Sightrange: 35
+  followLerp: 10
+  verticalLerp: 8
+  stingerStopDistance: 1
+  airStopDistance: 0.5
   Aud: {fileID: 108822471}
   ZombiDeath: {fileID: 8300000, guid: 556f78cd6becf68489844d17d8bcb1fb, type: 3}
   AudZombietDeathVol: 0.5
@@ -598,6 +602,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: c47b214702c0fb847aa970933b8051e5, type: 3}
   AudZombieFootSteps: 1
   animationZombieController: {fileID: 0}
+  gravityfloat: 0
+  gravityfloatDurantion: 0
   knockbackDuration: 0.5
   attackCooldown: 1.2
   attackRadius: 1
@@ -961,7 +967,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!95 &122835385
 Animator:
   serializedVersion: 7
@@ -1154,6 +1160,10 @@ MonoBehaviour:
   WalkPoint: {x: 0, y: 0, z: 0}
   walkpointRange: 30
   Sightrange: 35
+  followLerp: 10
+  verticalLerp: 8
+  stingerStopDistance: 1
+  airStopDistance: 0.5
   Aud: {fileID: 122835388}
   ZombiDeath: {fileID: 8300000, guid: 556f78cd6becf68489844d17d8bcb1fb, type: 3}
   AudZombietDeathVol: 0.5
@@ -1162,6 +1172,8 @@ MonoBehaviour:
   ZombieFootsteps: []
   AudZombieFootSteps: 0
   animationZombieController: {fileID: 122835385}
+  gravityfloat: 0
+  gravityfloatDurantion: 0
   knockbackDuration: 2
   attackCooldown: 0.5
   attackRadius: 1
@@ -3019,6 +3031,8 @@ MonoBehaviour:
   AirLauncherForce: 20
   AitLauncherdDamage: 0
   AirLauncherSpeed: 20
+  gravityfloat: 1
+  gravityfloatDurantion: 2
   SimpleCombospeed: 0
   SimpleComboDamage: 0
   StingerSpeed: 40
@@ -3665,7 +3679,11 @@ MonoBehaviour:
   WherePlayer:
     serializedVersion: 2
     m_Bits: 8
+  gravityfloat: 0
+  gravityfloatDurantion: 0
   knockbackDuration: 0.5
+  MNravityfloat: 0
+  NgravityfloatDurantion: 0
   Shotpostion: {fileID: 1734372810}
   Bullet: {fileID: 2082271980986677770, guid: c339bed290febef4f8d6b35f41970f9e, type: 3}
   shootrate: 10
@@ -4989,7 +5007,11 @@ MonoBehaviour:
   WherePlayer:
     serializedVersion: 2
     m_Bits: 8
+  gravityfloat: 0.5
+  gravityfloatDurantion: 1
   knockbackDuration: 0.5
+  MNravityfloat: 0
+  NgravityfloatDurantion: 0
   Shotpostion: {fileID: 1872455651}
   Bullet: {fileID: 2082271980986677770, guid: c339bed290febef4f8d6b35f41970f9e, type: 3}
   shootrate: 10
@@ -7390,6 +7412,10 @@ MonoBehaviour:
   WalkPoint: {x: 0, y: 0, z: 0}
   walkpointRange: 30
   Sightrange: 35
+  followLerp: 10
+  verticalLerp: 8
+  stingerStopDistance: 1
+  airStopDistance: 0.5
   Aud: {fileID: 1125128945}
   ZombiDeath: {fileID: 8300000, guid: 556f78cd6becf68489844d17d8bcb1fb, type: 3}
   AudZombietDeathVol: 0.5
@@ -7398,6 +7424,8 @@ MonoBehaviour:
   ZombieFootsteps: []
   AudZombieFootSteps: 0
   animationZombieController: {fileID: 1125128947}
+  gravityfloat: 1
+  gravityfloatDurantion: 2
   knockbackDuration: 2
   attackCooldown: 1.2
   attackRadius: 1
@@ -8652,6 +8680,7 @@ MonoBehaviour:
   CrazyImage: {fileID: 183595545}
   BallerImage: {fileID: 1300433307}
   AwesomeSauceImage: {fileID: 1300433307}
+  meterpoints: 0
   Player: {fileID: 0}
   PlayerScript: {fileID: 0}
   DMG_Screen: {fileID: 0}
@@ -11818,7 +11847,11 @@ MonoBehaviour:
   WherePlayer:
     serializedVersion: 2
     m_Bits: 8
+  gravityfloat: 0
+  gravityfloatDurantion: 0
   knockbackDuration: 0.5
+  MNravityfloat: 0
+  NgravityfloatDurantion: 0
   Shotpostion: {fileID: 1713255820}
   Bullet: {fileID: 2082271980986677770, guid: c339bed290febef4f8d6b35f41970f9e, type: 3}
   shootrate: 10

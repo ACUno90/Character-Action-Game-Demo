@@ -14,7 +14,13 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
     [SerializeField] Transform headPos;
     public LayerMask Ground, WherePlayer;
     private Rigidbody rb;
+    [SerializeField] float  gravityfloat;
+    [SerializeField] float gravityfloatDurantion;
+    bool isFloating;
+    float floatEndTime;
     public float knockbackDuration = 0.5f;
+    [SerializeField] float MNravityfloat;
+    [SerializeField] float NgravityfloatDurantion;
     [Header("Bullet")]
     [SerializeField] Transform Shotpostion;
     [SerializeField] GameObject Bullet;
@@ -75,10 +81,26 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
       //  colorOrig = Model.material.color;
     }
 
+    public void StartFloat()
+    {
+        isFloating = true;
+        floatEndTime = Time.time + gravityfloatDurantion;
+    }
+
+    void UpdateFloatState()
+    {
+        if (isFloating && Time.time > floatEndTime)
+        {
+            isFloating = false;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
         if (isNDead) return;
+        // update float timer
+        UpdateFloatState();
         isinSight = Physics.CheckSphere(transform.position, Sightrange, WherePlayer); // checks how far it can see the player and what you want to put im for it
         isinRange = Physics.CheckSphere(transform.position, Shootrange, WherePlayer); //Checks how far it can shoot the player and what you want to put im for it
 
@@ -99,6 +121,13 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
         }
     
 
+
+        // apply gravity when airborne (reduced while floating)
+        if (!Physics.Raycast(transform.position, Vector3.down, 1f, Ground))
+        {
+            float gravityToApply = isFloating ? NGravity * 0.3f : NGravity;
+            rb.AddForce(Vector3.down * gravityToApply * rb.mass * Time.deltaTime, ForceMode.Force);
+        }
 
         // Stinger follow: actively steer toward player's horizontal position for tighter tracking
         if (isFollwingStingPlayer && player != null)
@@ -127,6 +156,7 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
         // Air launcher follow: track vertical movement toward player's height
         if (isFollowingplayer && player != null)
         {
+            UpdateFloatState();
             float toPlayerY = player.transform.position.y - transform.position.y;
             float distY = Mathf.Abs(toPlayerY);
             if (distY <= airStopDistance)
@@ -146,7 +176,7 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
 
 
     }
-    public void StartAirFollow(Player p)
+    public void StartAirFollow(Player p, Vector3 horizontalDir)
     {
         player = p;
         isFollowingplayer = true;
@@ -155,6 +185,8 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
         rb.angularVelocity = Vector3.zero;
         // initial upward impulse
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.AirLauncherForce, rb.linearVelocity.z);
+        // start reduced gravity float so the player can follow-up in air
+        StartFloat();
     }
 
     public void StartStingFollow(Player p, Transform stickPoint)
@@ -166,15 +198,7 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
 
         if (stickPoint != null)
         {
-            //// immediately attach to the provided stick point
-            //isStingerAttached = true;
-            //if (Agent != null) Agent.enabled = false;
-            //rb.isKinematic = true;
-            //// snap to stick point and remember it for per-frame alignment
-            //stingerAttachPoint = stickPoint;
-            //transform.SetParent(null);
-            //transform.position = stingerAttachPoint.position;
-            //transform.rotation = stingerAttachPoint.rotation;
+  
 
             if (Agent != null) Agent.enabled = false;
             rb.isKinematic = true;
@@ -210,41 +234,18 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
             rb.isKinematic = false;
             if (Agent != null) Agent.enabled = true;
         }
-        //// stop following behaviour
-        //isFollwingStingPlayer = true;
-        //isFollowingplayer= true;
-
-        ////re-enable navmesh agent
-        //if (Agent != null)
-        //    Agent.enabled = true;
-
-        //detach from player
-      ///  transform.SetParent(null);
+      
     }
 
-    // public void Launch(float launchForce)
-    // {
-    //    // rb.AddForce(Vector3.up * launchForce, ForceMode.Impulse);
-    //    airBorne = true;
-    //   //add launchForce to y velocity
-    //    rb.linearVelocity = new Vector3(rb.linearVelocity.x, launchForce, rb.linearVelocity.z);
-    ////turn off navmesh agent
-    //        if (Agent !=null)
-    //         Agent.enabled = false;
 
-    // }
     public void EndLaunch()
     {
-               //airBorne = false;
+       
         //re-enable navmesh agent
         if (Agent != null)
             Agent.enabled = true;
 
     }
-
-    //Stinger player follow
-
-
 
     private void Shooting()
     {

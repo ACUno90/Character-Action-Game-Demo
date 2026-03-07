@@ -19,7 +19,8 @@ public class GameManger : MonoBehaviour
     [SerializeField] Image CrazyImage;
     [SerializeField] Image BallerImage;
     [SerializeField] Image AwesomeSauceImage;
-  //  [SerializeField] Image SupremeImage;
+    //  [SerializeField] Image SupremeImage;
+    public int meterpoints;
 
 
 
@@ -107,31 +108,7 @@ public class GameManger : MonoBehaviour
 
     public void UpdateHealthBar()
     {
-        //PlayerHealthColor.color = new Color(255, 1, 0, 0);
-        //if (PlayerScript != null)
-        //{
-        //    healthPercentage = 0;
-        //    safe = 0;
-        //    //  hp_text.text = Player.GetComponent<PlayerMovement>().health.ToString("F0");
-        //    // Assuming PlayerScript has a 'health' and 'maxHealth' variable
-        //    healthPercentage = Player.GetComponent<Player>().health / Player.GetComponent<Player>().maxHealth;
-        //    safe = 70 / 100;
-        //    safe = 1 - safe;
-        //    safe = safe / 3;
-        //    Player_HP_Bar.fillAmount = healthPercentage; // Updates the health bar fill amount
-        //    healthPercentage = 1 - healthPercentage;
-        //    healthPercentage = healthPercentage / 3;
-        //    if (healthPercentage < safe)
-        //    {
-        //        PlayerHealthColor.color = new Color(255, 1, 0, healthPercentage);
-        //    }
-        //    else
-        //    {
-        //        PlayerHealthColor.color = new Color(255, 1, 0, safe);
-        //    }
-
-
-        //}
+       
         setHealth();
         SetMaxHealth();
     }
@@ -174,6 +151,38 @@ public class GameManger : MonoBehaviour
             StartPause();
             Menu_Active = Menu_Win;
             Menu_Win.SetActive(Ispaused);
+        }
+    }
+
+
+    public void PlayClickSound()
+    {
+        playerADU.PlayOneShot(AUDclick[Random.Range(0, AUDclick.Length)], AUDclickV);
+    }
+
+    public void StopClickSound() {
+        playerADU.Stop();
+    }
+
+    public void MeterPointAddage()
+    {
+        meterpoints++;
+        //For testing now, will change numbers later
+        if (meterpoints == 1)
+        {
+            DopeImage.enabled = true;
+        }
+        else if (meterpoints == 2)
+        {
+            CrazyImage.enabled = true;
+        }
+        else if (meterpoints == 3)
+        {
+            BallerImage.enabled = true;
+        }
+        else if (meterpoints == 4)
+        {
+            AwesomeSauceImage.enabled = true;
         }
     }
 }

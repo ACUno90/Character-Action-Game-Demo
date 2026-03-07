@@ -12,6 +12,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     [SerializeField] LayerMask IgnoreEnemy;
     [SerializeField] NavMeshAgent agent;
     public LayerMask Ground, WherePlayer;
+    // gravity float fields (use the single set below)
     //Patroling
     public Vector3 WalkPoint;
     bool IsWalking;
@@ -20,6 +21,11 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     //States
     [SerializeField] float Sightrange;
     bool isinSight;
+    [Header("Follow Tuning")]
+    [SerializeField] float followLerp = 10f;
+    [SerializeField] float verticalLerp = 8f;
+    [SerializeField] float stingerStopDistance = 1f;
+    [SerializeField] float airStopDistance = 0.5f;
     Player player;
     [SerializeField] AudioSource Aud;
     [SerializeField] AudioClip ZombiDeath;
@@ -30,9 +36,16 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     [SerializeField] float AudZombieFootSteps;
     public Animator animationZombieController;
     private Rigidbody rb;
+    Collider myCollider;
+    bool prevIsTrigger;
+    [SerializeField] int gravityfloat;
+    [SerializeField] int gravityfloatDurantion;
+    bool isFloating;
+    float floatEndTime;
     public float knockbackDuration = 0.5f;
     bool IsFollowingPlayer;
     bool isFoleingStingPlayerZ;
+    bool isFollowingplayerAir;
     bool ZombieHurt;
     bool isPlayingStop;
     bool IsZDead;
@@ -49,6 +62,22 @@ public class ZombieEnemy : MonoBehaviour, IDamage
      //   colorOrig = Model.material.color;
         GameManger.Instance.updateGameGoal(1);
        rb = GetComponent<Rigidbody>();
+       myCollider = GetComponent<Collider>();
+       if (myCollider != null) prevIsTrigger = myCollider.isTrigger;
+    }
+
+    public void StartFloat()
+    {
+        isFloating = true;
+        floatEndTime = Time.time + gravityfloatDurantion;
+    }
+
+    void UpdateFloatState()
+    {
+        if (isFloating && Time.time > floatEndTime)
+        {
+            isFloating = false;
+        }
     }
 
 
@@ -57,6 +86,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     void Update()
     {
         if(IsZDead) return;
+        UpdateFloatState();
         isinSight = Physics.CheckSphere(transform.position, Sightrange, WherePlayer);
         if (!isinSight)
         {
@@ -96,24 +126,46 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         // horizontal follow: only run when following horizontally and player available
         if (IsFollowingPlayer && player != null)
         {
-            // match player's horizontal movement
-            rb.linearVelocity = new Vector3(player.GetHorizontalVelocity(), rb.linearVelocity.y, player.GetHorizontalVelocity());
-
-            if (player.GetHorizontalVelocity() <= 0)
+            // steer toward player's horizontal position (better control than copying controller velocity)
+            Vector3 toPlayer = player.transform.position - transform.position;
+            Vector3 horizontalDir = new Vector3(toPlayer.x, 0f, toPlayer.z);
+            float sqrDist = horizontalDir.sqrMagnitude;
+            if (sqrDist <= stingerStopDistance * stingerStopDistance)
             {
                 IsFollowingPlayer = false;
             }
+            else if (sqrDist > 0.001f)
+            {
+                horizontalDir.Normalize();
+                Vector3 desired = horizontalDir * player.StingerForce;
+                Vector3 currentHorizontal = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+                Vector3 neededChange = desired - currentHorizontal;
+                // use the same instant velocity-change approach as Necromancer for tighter tracking
+                rb.AddForce(neededChange * followLerp, ForceMode.VelocityChange);
+            }
         }
 
-        // vertical follow: separate check so it won't be affected by horizontal logic
-        if (isFoleingStingPlayerZ && player != null)
+        // vertical follow for air launcher: mirror Necromancer logic
+        if (isFollowingplayerAir && player != null)
         {
-            // match player's vertical movement
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.GetVerticalVelocity(), rb.linearVelocity.z);
+            UpdateFloatState();
+            float toPlayerY = player.transform.position.y - transform.position.y;
+            float distY = Mathf.Abs(toPlayerY);
+            if (distY <= airStopDistance)
+            {
+                isFollowingplayerAir = false;
+            }
+            else
+            {
+                float desiredY = Mathf.Clamp(toPlayerY, -player.AirLauncherForce, player.AirLauncherForce);
+                float newY = Mathf.Lerp(rb.linearVelocity.y, desiredY, Time.deltaTime * verticalLerp);
+                float neededChangeY = newY - rb.linearVelocity.y;
+                rb.AddForce(Vector3.up * neededChangeY, ForceMode.VelocityChange);
+            }
 
             if (player.GetVerticalVelocity() <= 0)
             {
-                isFoleingStingPlayerZ = false;
+                isFollowingplayerAir = false;
             }
         }
 
@@ -135,24 +187,70 @@ public class ZombieEnemy : MonoBehaviour, IDamage
             transform.localRotation = Quaternion.identity;
             IsFollowingPlayer = false;
             isFoleingStingPlayerZ = false;
+            // disable physical collisions while attached so weapon/player don't push the enemy away
+            if (myCollider != null) myCollider.isTrigger = true;
+            // ignore collisions with the player while attached to stick
+            Collider playerCol = GameManger.Instance.Player.GetComponent<Collider>();
+            if (playerCol == null) playerCol = GameManger.Instance.Player.GetComponentInChildren<Collider>();
+            if (playerCol != null && myCollider != null)
+                Physics.IgnoreCollision(myCollider, playerCol, true);
         }
         else
         {
             // initial horizontal impulse
             IsFollowingPlayer = true;
-            rb.AddForce(transform.forward * player.StingerSpeed, ForceMode.VelocityChange);
+            if (agent != null) agent.enabled = false;
+            // push toward player's horizontal direction for a tighter stinger launch
+            Vector3 toPlayer = (player.transform.position - transform.position);
+            Vector3 horizontalDir = new Vector3(toPlayer.x, 0f, toPlayer.z);
+            if (horizontalDir.sqrMagnitude > 0.001f)
+            {
+                horizontalDir.Normalize();
+                rb.isKinematic = false;
+                rb.AddForce(horizontalDir * player.StingerForce, ForceMode.VelocityChange);
+            }
         }
     }
 
     public void StartAirFollow(Player p)
     {
+        StartAirFollow(p, Vector3.zero);
+    }
+
+    // overload to allow specifying horizontal launch direction (used for chain collisions)
+    public void StartAirFollow(Player p, Vector3 horizontalDir)
+    {
         player = p;
-        isFoleingStingPlayerZ = true;
+        isFollowingplayerAir = true;
         //reset rb velocity
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        //initial launch
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y + player.AirLauncherForce, rb.linearVelocity.z);
+        // ensure agent is disabled and physics active
+        if (agent != null) agent.enabled = false;
+        rb.isKinematic = false;
+        // ensure collider participates in collisions
+        if (myCollider != null) myCollider.isTrigger = false;
+
+        // determine horizontal direction toward player if none provided
+        if (horizontalDir == Vector3.zero && player != null)
+        {
+            Vector3 toPlayer = player.transform.position - transform.position;
+            horizontalDir = new Vector3(toPlayer.x, 0f, toPlayer.z);
+            if (horizontalDir.sqrMagnitude > 0.001f) horizontalDir.Normalize();
+        }
+
+        // apply combined velocity
+        Vector3 launchVel = Vector3.up * player.AirLauncherForce;
+        if (horizontalDir != Vector3.zero)
+            launchVel += horizontalDir * Mathf.Max(player.StingerForce, 1f);
+
+        rb.AddForce(launchVel, ForceMode.VelocityChange);
+        // enable horizontal tracking if we launched with a horizontal direction
+        if (horizontalDir != Vector3.zero)
+        {
+            isFollowingplayerAir = true;
+        }
+        StartFloat();
     }
 
 
@@ -166,8 +264,46 @@ public class ZombieEnemy : MonoBehaviour, IDamage
        isFoleingStingPlayerZ = true;
         //detach from player
         transform.SetParent(null);
+        if (myCollider != null) myCollider.isTrigger = prevIsTrigger;
+        // re-enable collisions with player
+        Collider playerCol = GameManger.Instance.Player.GetComponent<Collider>();
+        if (playerCol == null) playerCol = GameManger.Instance.Player.GetComponentInChildren<Collider>();
+        if (playerCol != null && myCollider != null)
+            Physics.IgnoreCollision(myCollider, playerCol, false);
 
 
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        // chain-launch other enemies if this zombie is airborne and hits them with enough relative velocity
+        if (rb == null) return;
+        float speed = rb.linearVelocity.magnitude;
+        if (speed < 2f) return; // require some momentum to transfer
+
+        var otherZ = collision.gameObject.GetComponent<ZombieEnemy>();
+        var otherN = collision.gameObject.GetComponent<NecromancerEnemy>();
+
+        // compute a horizontal launch direction based on collision contact
+        Vector3 horizontalDir = Vector3.zero;
+        if (collision.contactCount > 0)
+        {
+            Vector3 contactNormal = collision.GetContact(0).normal;
+            // reflect our velocity across the contact normal and take horizontal component toward player
+            Vector3 reflect = Vector3.Reflect(rb.linearVelocity.normalized, contactNormal);
+            horizontalDir = new Vector3(reflect.x, 0f, reflect.z).normalized;
+        }
+
+        if (otherZ != null)
+        {
+            otherZ.StartAirFollow(GameManger.Instance.PlayerScript, horizontalDir);
+            otherZ.StartFloat();
+        }
+        else if (otherN != null)
+        {
+            otherN.StartAirFollow(GameManger.Instance.PlayerScript, horizontalDir);
+            otherN.StartFloat();
+        }
     }
 
     private void OnTriggerEnter(Collider collision)
@@ -186,6 +322,13 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     }
     public void ApplyKnockback(Vector3 direction, float force)
     {
+        // If the zombie is currently attached to or being tracked by the player
+        // (stinger or air-launcher) or is floating/kinematic, don't apply knockback.
+        if (isFollowingplayerAir || IsFollowingPlayer || isFoleingStingPlayerZ || isFloating || (rb != null && rb.isKinematic))
+        {
+            Debug.Log("ApplyKnockback skipped due to air/stinger/floating/kinematic state");
+            return;
+        }
         // StartCoroutine(KnockbackCoroutine(direction, force));
         //disbale navmesh agent
         agent.enabled = false;
@@ -237,7 +380,13 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         }
         //animationZombieController.SetBool("ZombieHit", false);
         //add a if check if the player's simple 3 hit combo is true then apply knockback 
-        ApplyKnockback(-transform.forward, 1f);
+        // Don't apply knockback if the enemy is currently attached to the player (stinger)
+        // or is being tracked by the player's air-launcher. Also avoid applying knockback
+        // while the rigidbody is kinematic or while floating.
+        //if (!isFollowingplayerAir && !IsFollowingPlayer && !isFoleingStingPlayerZ && !isFloating && !rb.isKinematic)
+        //{
+        //    ApplyKnockback(-transform.forward, 1f);
+        //}
 
     }
     public void Patroling()

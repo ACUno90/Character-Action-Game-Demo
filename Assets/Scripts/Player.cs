@@ -33,6 +33,8 @@ public class Player : MonoBehaviour, IDamage
     public float AirLauncherForce;
     [SerializeField] int AitLauncherdDamage;
     [SerializeField] int AirLauncherSpeed;//to experiment
+    [SerializeField] int gravityfloat;
+    [SerializeField] int gravityfloatDurantion;
     [SerializeField] int SimpleCombospeed;
     [SerializeField] int SimpleComboDamage;
     [SerializeField] public int StingerSpeed;//to experiment
@@ -86,8 +88,12 @@ public class Player : MonoBehaviour, IDamage
     public Animator animationController;
     // to make it use states
     private PlayerStateMachine state;
+    private GameManger gm;
 
     public MovementState MoveState;
+    private bool isFloating;
+    private float floatEndTime;
+
     public enum MovementState
     {
         idle,
@@ -114,6 +120,7 @@ public class Player : MonoBehaviour, IDamage
     // Update is called once per frame
     void Update()
     {
+        UpdateFloatState();
         // so we can move camera with mouse
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootdistance, Color.red);
         turn.x += Input.GetAxis("Mouse X") * sensitivity;
@@ -198,7 +205,8 @@ public class Player : MonoBehaviour, IDamage
 
 
         controller.Move(Playerval * Time.deltaTime);
-        Playerval.y -= Gravity * Time.deltaTime;
+        float currentGravity = isFloating ? gravityfloat : Gravity;
+        Playerval.y -= currentGravity * Time.deltaTime;
 
 
 
@@ -238,6 +246,8 @@ public class Player : MonoBehaviour, IDamage
         isStinger = true;
         canStingForward = false;
         animationController.SetTrigger("Stinger");
+      //  gm.MeterPointAddage();
+
     }
 
     public void ActivateStingerForward()
@@ -278,7 +288,7 @@ public class Player : MonoBehaviour, IDamage
         canMoveUp = false;
         //use a trigger instead of bool 
         animationController.SetTrigger("airLauncher");
-    
+       // gm.MeterPointAddage();
     }
      
     public void ActivateAirLauncherForce()
@@ -354,6 +364,14 @@ public class Player : MonoBehaviour, IDamage
         }
         aud.PlayOneShot(audHurt[Random.Range(0, audHurt.Length)], audHurtVol);
     }
+    void UpdateFloatState()
+    {
+        if (isFloating && Time.time > floatEndTime)
+        {
+            isFloating = false;
+        }
+    }
+    
 
 
     IEnumerator PlaySteps()
@@ -386,6 +404,12 @@ public class Player : MonoBehaviour, IDamage
     public float GetVerticalVelocity()
     {
       return controller.velocity.y; 
+    }
+
+    public void TriggerFloat()
+    {
+        isFloating = true;
+        floatEndTime = Time.time + gravityfloatDurantion;
     }
 
     public float GetHorizontalVelocity()
