@@ -215,6 +215,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     public void StartAirFollow(Player p)
     {
         StartAirFollow(p, Vector3.zero);
+        isFollowingplayerAir = true;
     }
 
     // overload to allow specifying horizontal launch direction (used for chain collisions)
@@ -225,31 +226,13 @@ public class ZombieEnemy : MonoBehaviour, IDamage
         //reset rb velocity
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        // ensure agent is disabled and physics active
+        // ensure agent is disabled and physics active so physics affects the zombie like Necromancer
         if (agent != null) agent.enabled = false;
         rb.isKinematic = false;
-        // ensure collider participates in collisions
         if (myCollider != null) myCollider.isTrigger = false;
-
-        // determine horizontal direction toward player if none provided
-        if (horizontalDir == Vector3.zero && player != null)
-        {
-            Vector3 toPlayer = player.transform.position - transform.position;
-            horizontalDir = new Vector3(toPlayer.x, 0f, toPlayer.z);
-            if (horizontalDir.sqrMagnitude > 0.001f) horizontalDir.Normalize();
-        }
-
-        // apply combined velocity
-        Vector3 launchVel = Vector3.up * player.AirLauncherForce;
-        if (horizontalDir != Vector3.zero)
-            launchVel += horizontalDir * Mathf.Max(player.StingerForce, 1f);
-
-        rb.AddForce(launchVel, ForceMode.VelocityChange);
-        // enable horizontal tracking if we launched with a horizontal direction
-        if (horizontalDir != Vector3.zero)
-        {
-            isFollowingplayerAir = true;
-        }
+        // initial upward impulse (set vertical velocity directly like Necromancer)
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.AirLauncherForce, rb.linearVelocity.z);
+        // start reduced gravity float so the player can follow-up in air
         StartFloat();
     }
 
