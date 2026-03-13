@@ -33,8 +33,8 @@ public class Player : MonoBehaviour, IDamage
     public float AirLauncherForce;
     [SerializeField] int AitLauncherdDamage;
     [SerializeField] int AirLauncherSpeed;//to experiment
-    [SerializeField] int gravityfloat;
-    [SerializeField] int gravityfloatDurantion;
+    [SerializeField] float gravityfloat;
+    [SerializeField] float gravityfloatDurantion;
     [SerializeField] int SimpleCombospeed;
     [SerializeField] int SimpleComboDamage;
     [SerializeField] public int StingerSpeed;//to experiment

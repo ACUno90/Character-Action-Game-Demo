@@ -601,6 +601,8 @@ MonoBehaviour:
   ZombieFootsteps:
   - {fileID: 8300000, guid: c47b214702c0fb847aa970933b8051e5, type: 3}
   AudZombieFootSteps: 1
+  ZombieMeleeAttack: {fileID: 0}
+  AudZombieMeleeAttack: 0
   animationZombieController: {fileID: 0}
   gravityfloat: 0
   gravityfloatDurantion: 0
@@ -1171,6 +1173,8 @@ MonoBehaviour:
   AudZombieHitVol: 0.5
   ZombieFootsteps: []
   AudZombieFootSteps: 0
+  ZombieMeleeAttack: {fileID: 8300000, guid: 7e523b5991a768e44baa33bac0707a54, type: 3}
+  AudZombieMeleeAttack: 0.5
   animationZombieController: {fileID: 122835385}
   gravityfloat: 0
   gravityfloatDurantion: 0
@@ -3032,7 +3036,7 @@ MonoBehaviour:
   AitLauncherdDamage: 0
   AirLauncherSpeed: 20
   gravityfloat: 1
-  gravityfloatDurantion: 2
+  gravityfloatDurantion: 0.5
   SimpleCombospeed: 0
   SimpleComboDamage: 0
   StingerSpeed: 40
@@ -3680,7 +3684,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   gravityfloat: 0
-  gravityfloatDurantion: 0
+  gravityfloatDurantion: 1
   knockbackDuration: 0.5
   MNravityfloat: 0
   NgravityfloatDurantion: 0
@@ -3704,7 +3708,7 @@ MonoBehaviour:
   AudNecromancerDeathVol: 0.5
   NecromancerHit: {fileID: 8300000, guid: 43da6a209dd129c44afb4fe079ebc9b7, type: 3}
   AudNecromancerHitVol: 0.5
-  NecromancerFireBall: {fileID: 8300000, guid: 43da6a209dd129c44afb4fe079ebc9b7, type: 3}
+  NecromancerFireBall: {fileID: 8300000, guid: d9e8bae50826e9f468caa0f836f55aa8, type: 3}
   AudNecromancerFireBall: 0.5
   NecromancerFootsteps: []
   AudNecromancerFootSteps: 0
@@ -5032,7 +5036,7 @@ MonoBehaviour:
   AudNecromancerDeathVol: 0.5
   NecromancerHit: {fileID: 8300000, guid: 43da6a209dd129c44afb4fe079ebc9b7, type: 3}
   AudNecromancerHitVol: 0.5
-  NecromancerFireBall: {fileID: 8300000, guid: 43da6a209dd129c44afb4fe079ebc9b7, type: 3}
+  NecromancerFireBall: {fileID: 8300000, guid: d9e8bae50826e9f468caa0f836f55aa8, type: 3}
   AudNecromancerFireBall: 0.5
   NecromancerFootsteps: []
   AudNecromancerFootSteps: 0
@@ -7423,9 +7427,11 @@ MonoBehaviour:
   AudZombieHitVol: 0.5
   ZombieFootsteps: []
   AudZombieFootSteps: 0
+  ZombieMeleeAttack: {fileID: 8300000, guid: 7e523b5991a768e44baa33bac0707a54, type: 3}
+  AudZombieMeleeAttack: 0.5
   animationZombieController: {fileID: 1125128947}
   gravityfloat: 1
-  gravityfloatDurantion: 2
+  gravityfloatDurantion: 0.5
   knockbackDuration: 2
   attackCooldown: 1.2
   attackRadius: 1

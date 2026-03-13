@@ -51,6 +51,7 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
     bool isinRange;
 
     // Audio 
+    [Header("Audio")]
     [SerializeField] AudioSource Aud;
     [SerializeField] AudioClip NecromancerDeath;
     [SerializeField] float AudNecromancerDeathVol;

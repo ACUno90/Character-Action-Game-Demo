@@ -27,6 +27,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     [SerializeField] float stingerStopDistance = 1f;
     [SerializeField] float airStopDistance = 0.5f;
     Player player;
+    [Header("Audio")]
     [SerializeField] AudioSource Aud;
     [SerializeField] AudioClip ZombiDeath;
     [SerializeField] float AudZombietDeathVol;
@@ -34,12 +35,14 @@ public class ZombieEnemy : MonoBehaviour, IDamage
     [SerializeField] float AudZombieHitVol;
     [SerializeField] AudioClip[] ZombieFootsteps;
     [SerializeField] float AudZombieFootSteps;
+    [SerializeField] AudioClip ZombieMeleeAttack;
+    [SerializeField] float AudZombieMeleeAttack;
     public Animator animationZombieController;
     private Rigidbody rb;
     Collider myCollider;
     bool prevIsTrigger;
-    [SerializeField] int gravityfloat;
-    [SerializeField] int gravityfloatDurantion;
+    [SerializeField] float gravityfloat;
+    [SerializeField] float gravityfloatDurantion;
     bool isFloating;
     float floatEndTime;
     public float knockbackDuration = 0.5f;
@@ -437,6 +440,7 @@ public class ZombieEnemy : MonoBehaviour, IDamage
             Player p = c.GetComponent<Player>();
             if (p != null)
             {
+                Aud.PlayOneShot(ZombieMeleeAttack, AudZombieMeleeAttack);
                 p.takeDamage(damage);
             }
             else
