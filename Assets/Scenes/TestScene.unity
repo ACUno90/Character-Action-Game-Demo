@@ -1176,9 +1176,9 @@ MonoBehaviour:
   ZombieMeleeAttack: {fileID: 8300000, guid: 7e523b5991a768e44baa33bac0707a54, type: 3}
   AudZombieMeleeAttack: 0.5
   animationZombieController: {fileID: 122835385}
-  gravityfloat: 0
-  gravityfloatDurantion: 0
-  knockbackDuration: 2
+  gravityfloat: 1
+  gravityfloatDurantion: 2
+  knockbackDuration: 0
   attackCooldown: 0.5
   attackRadius: 1
   attackOffset: {x: 0.5, y: 0.5, z: 0}
@@ -3036,7 +3036,7 @@ MonoBehaviour:
   AitLauncherdDamage: 0
   AirLauncherSpeed: 20
   gravityfloat: 1
-  gravityfloatDurantion: 0.5
+  gravityfloatDurantion: 2
   SimpleCombospeed: 0
   SimpleComboDamage: 0
   StingerSpeed: 40
@@ -3466,7 +3466,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!54 &510696917
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5011,8 +5011,8 @@ MonoBehaviour:
   WherePlayer:
     serializedVersion: 2
     m_Bits: 8
-  gravityfloat: 0.5
-  gravityfloatDurantion: 1
+  gravityfloat: 5
+  gravityfloatDurantion: 2
   knockbackDuration: 0.5
   MNravityfloat: 0
   NgravityfloatDurantion: 0
@@ -7239,7 +7239,7 @@ Transform:
   m_GameObject: {fileID: 1125128941}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -101.88, y: 4.24, z: -2.0791683}
+  m_LocalPosition: {x: -93, y: 4.24, z: 3.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7431,8 +7431,8 @@ MonoBehaviour:
   AudZombieMeleeAttack: 0.5
   animationZombieController: {fileID: 1125128947}
   gravityfloat: 1
-  gravityfloatDurantion: 0.5
-  knockbackDuration: 2
+  gravityfloatDurantion: 2
+  knockbackDuration: 0
   attackCooldown: 1.2
   attackRadius: 1
   attackOffset: {x: 0.5, y: 0.5, z: 0}
