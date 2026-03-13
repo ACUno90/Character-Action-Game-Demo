@@ -290,6 +290,36 @@ public class ZombieEnemy : MonoBehaviour, IDamage
             otherN.StartAirFollow(GameManger.Instance.PlayerScript, horizontalDir);
             otherN.StartFloat();
         }
+
+        // If we hit the ground while airborne/being followed, transition back to NavMesh control
+        // ground detection via layer mask
+        if ((Ground.value & (1 << collision.gameObject.layer)) != 0)
+        {
+            // consider it a landing if vertical speed is low or we were following in air/float
+            if (Mathf.Abs(rb.linearVelocity.y) < 1f || isFollowingplayerAir || isFloating)
+            {
+                LandFromAir();
+            }
+        }
+    }
+
+    void LandFromAir()
+    {
+        // stop physics movement and restore NavMesh control
+        if (agent != null) agent.enabled = true;
+        // switch back to kinematic so agent controls transform
+        rb.isKinematic = true;
+        rb.linearVelocity = Vector3.zero;
+      //  rb.velocity = Vector3.zero;
+        // reset follow/float flags
+        isFollowingplayerAir = false;
+        IsFollowingPlayer = false;
+        isFoleingStingPlayerZ = false;
+        isFloating = false;
+        // trigger a get-up animation if present (add "ZombieGetUp" trigger in Animator)
+        if (animationZombieController != null)
+            animationZombieController.SetTrigger("ZombieGetUp");
+        Debug.Log("Zombie landed and returned to NavMesh control");
     }
 
     private void OnTriggerEnter(Collider collision)

@@ -190,6 +190,36 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
         StartFloat();
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        // detect ground collisions using the Ground layermask
+        if ((Ground.value & (1 << collision.gameObject.layer)) != 0)
+        {
+            // consider landed if vertical velocity low or we were floating/following
+            if (Mathf.Abs(rb.linearVelocity.y) < 1f || isFloating || isFollowingplayer)
+            {
+                LandFromAir();
+            }
+        }
+    }
+
+    void LandFromAir()
+    {
+        // stop physics movement and restore NavMesh control
+        if (Agent != null) Agent.enabled = true;
+        rb.isKinematic = true;
+        rb.linearVelocity = Vector3.zero;
+        //rb.velocity = Vector3.zero;
+        // reset follow/float flags
+        isFloating = false;
+        isFollowingplayer = false;
+        isFollwingStingPlayer = false;
+        // trigger a get-up animation if present (add "NercoGetUp" trigger in Animator)
+        if (animationNecroController != null)
+            animationNecroController.SetTrigger("NercoGetUp");
+        Debug.Log("Necromancer landed and returned to NavMesh control");
+    }
+
     public void StartStingFollow(Player p, Transform stickPoint)
     {
         player = p;

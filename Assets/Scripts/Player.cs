@@ -189,16 +189,16 @@ public class Player : MonoBehaviour, IDamage
             jumpcount++;
             Playerval.y = JumpSpeed;
             aud.PlayOneShot(audJump[Random.Range(0, audJump.Length)], audJumpVol);
-        
-            if (controller.isGrounded)
-            {
-                animationController.SetFloat("JumpSpeed", 0);
+        animationController.SetTrigger("PJump");
+            //if (controller.isGrounded)
+            //{
+            //    animationController.SetFloat("JumpSpeed", 0);
 
-            }
-            else
-            {
-                animationController.SetFloat("JumpSpeed", 1);
-            }
+            //}
+            //else
+            //{
+            //    animationController.SetFloat("JumpSpeed", 1);
+            //}
 
             DoubleJump = !DoubleJump;
         }
