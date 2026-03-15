@@ -81,7 +81,7 @@ public class Player : MonoBehaviour, IDamage
     //bool isNotActionMove = false;
     public bool RequestingActionMove = false;
     private bool DoubleJump;
-    private bool jump;
+    private bool jumprun;
     public bool dashing;
     public Vector2 turn;
     public float sensitivity = .5f;
@@ -158,16 +158,9 @@ public class Player : MonoBehaviour, IDamage
 
 
         controller.Move(moveDirc * Speed * Time.deltaTime);
+        //animationController
         if (moveDirc == Vector3.zero)
         {
-            //idle animation
-            //if (isStinger == true)
-            //{
-            //    animationController.SetBool("Stinger", false);
-            //    isStinger = false;
-            //}
-
-
             animationController.SetFloat("speed", 0);
         }
 
@@ -175,13 +168,14 @@ public class Player : MonoBehaviour, IDamage
         {
             //run animation
             animationController.SetFloat("speed", 1);
+            jumprun = true;
         }
 
-        //if (isAirLauncher == true)
-        //{
-        //    animationController.SetBool("airLauncher", false);
-        //    isAirLauncher = false;
-        //}
+        if (isAirLauncher == true)
+        {
+            animationController.SetBool("airLauncher", false);
+            isAirLauncher = false;
+        }
 
 
         if (Input.GetButtonDown("Jump") && jumpcount < JumpMax)
@@ -190,15 +184,11 @@ public class Player : MonoBehaviour, IDamage
             Playerval.y = JumpSpeed;
             aud.PlayOneShot(audJump[Random.Range(0, audJump.Length)], audJumpVol);
         animationController.SetTrigger("PJump");
-            //if (controller.isGrounded)
-            //{
-            //    animationController.SetFloat("JumpSpeed", 0);
-
-            //}
-            //else
-            //{
-            //    animationController.SetFloat("JumpSpeed", 1);
-            //}
+        if(jumprun == true)
+            {
+                animationController.SetTrigger("PJump");
+                jumprun = false;
+            }
 
             DoubleJump = !DoubleJump;
         }
