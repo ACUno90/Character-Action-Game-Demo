@@ -184,24 +184,26 @@ public class NecromancerEnemy : MonoBehaviour,IDamage
         //reset rb velocity
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
+        if(Agent != null) Agent.enabled = false;
+        rb.isKinematic = false;
         // initial upward impulse
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, player.AirLauncherForce, rb.linearVelocity.z);
         // start reduced gravity float so the player can follow-up in air
         StartFloat();
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        // detect ground collisions using the Ground layermask
-        if ((Ground.value & (1 << collision.gameObject.layer)) != 0)
-        {
-            // consider landed if vertical velocity low or we were floating/following
-            if (Mathf.Abs(rb.linearVelocity.y) < 1f || isFloating || isFollowingplayer)
-            {
-                LandFromAir();
-            }
-        }
-    }
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    // detect ground collisions using the Ground layermask
+    //    if ((Ground.value & (1 << collision.gameObject.layer)) != 0)
+    //    {
+    //        //// consider landed if vertical velocity low or we were floating/following
+    //        //if (Mathf.Abs(rb.linearVelocity.y) < 1f || isFloating || isFollowingplayer)
+    //        //{
+    //        //    LandFromAir();
+    //        //}
+    //    }
+    //}
 
     void LandFromAir()
     {

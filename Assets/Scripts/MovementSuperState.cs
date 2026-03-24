@@ -20,7 +20,7 @@ public class MovementSuperState : PlayerState
     {
         base.TransitionChecks();
 
-        if (Input.GetKeyDown(KeyCode.LeftAlt))
+        if (Input.GetButtonDown("Stinger"))
         {
           
             player.MoveState = Player.MovementState.stinger;
@@ -39,6 +39,14 @@ public class MovementSuperState : PlayerState
             return;
         }
 
+        if(Input.GetKeyDown(KeyCode.RightAlt))
+        {
+            player.MoveState = Player.MovementState.downSlash;
+            player.StartDownSlash();
+            stateMachine.ChangeState(new CharacterActionMovementSuperState(player, "isUsingActionMove", stateMachine));
+        
+            return;
+        }
 
     }
 

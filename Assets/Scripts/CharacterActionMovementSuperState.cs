@@ -44,9 +44,17 @@ public class CharacterActionMovementSuperState : PlayerState
 
                   return;
                   }
-    
 
-    }
+              if (player.MoveState == Player.MovementState.downSlash)
+              {
+            player.UpdateDownSlash();
+
+            return;
+             }
+
+
+
+        }
 
     //For Idle use
     public override void TransitionChecks()

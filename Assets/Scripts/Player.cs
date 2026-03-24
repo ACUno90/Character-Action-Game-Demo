@@ -62,6 +62,8 @@ public class Player : MonoBehaviour, IDamage
     public bool isStinger;
     public bool isAirLauncher;
     bool airLauncherActive;
+    private bool DownSlashActive;
+    bool canMoveUpDS;
     bool canMoveUp;
     bool canStingForward;
     private bool IsPlayingStop;
@@ -82,6 +84,7 @@ public class Player : MonoBehaviour, IDamage
     public bool RequestingActionMove = false;
     private bool DoubleJump;
     private bool jumprun;
+    private bool hasJumped;
     public bool dashing;
     public Vector2 turn;
     public float sensitivity = .5f;
@@ -99,7 +102,8 @@ public class Player : MonoBehaviour, IDamage
         idle,
         stinger,
         laucher,
-        ThreeHitCombo
+        ThreeHitCombo,
+        downSlash
     }
 
     // Start is called before the first frame update
@@ -147,6 +151,7 @@ public class Player : MonoBehaviour, IDamage
             Playerval = Vector3.zero;
             jumpcount = 0;
             DoubleJump = false;
+            hasJumped = false;
             if (!IsPlayingStop && moveDirc != Vector3.zero)
             {
                 StartCoroutine(PlaySteps());
@@ -171,11 +176,7 @@ public class Player : MonoBehaviour, IDamage
             jumprun = true;
         }
 
-        if (isAirLauncher == true)
-        {
-            animationController.SetBool("airLauncher", false);
-            isAirLauncher = false;
-        }
+  
 
 
         if (Input.GetButtonDown("Jump") && jumpcount < JumpMax)
@@ -189,8 +190,11 @@ public class Player : MonoBehaviour, IDamage
                 animationController.SetTrigger("PJump");
                 jumprun = false;
             }
+          //  ActivateDownSlash();
 
-            DoubleJump = !DoubleJump;
+                // mark that a jump has occurred so sequence (jump -> air launcher -> down slash) can be validated
+                hasJumped = true;
+                DoubleJump = !DoubleJump;
         }
 
 
@@ -284,6 +288,8 @@ public class Player : MonoBehaviour, IDamage
     public void ActivateAirLauncherForce()
     {
         canMoveUp = true;
+        hasJumped = true;
+
     }
 
     public void UpdateAirLauncher()
@@ -292,18 +298,63 @@ public class Player : MonoBehaviour, IDamage
         {
             return;
         }
-  
+      
         controller.Move(transform.up * AirLauncherSpeed * Time.deltaTime);
         aud.PlayOneShot(audLauncher, audLauncherVol);
+      
     }
-
-
 
   public void EndAirLauncher()
     {
         isAirLauncher = false;
     }
 
+    public void StartDownSlash()
+    {
+        // only allow starting the down-slash while airborne and only after a jump followed by an air launcher
+        if (controller != null && controller.isGrounded)
+        {
+            return;
+        }
+        //TODO FIX: make it more seamless when we air launch since rn ther animation and code for it make it so the player goes straigth down after air aluncher, so add a buffer time, with gravity float so we can do the downslash animation
+        // require the jump -> air launcher sequence
+        if (!hasJumped) //|| !isAirLauncher)
+        {
+            return;
+        }
+
+        // consume the jump flag so the sequence must be repeated for another down-slash
+        hasJumped = false;
+
+        DownSlashActive = true;
+        canMoveUpDS = false;
+        animationController.SetTrigger("SlashDown");
+        Debug.Log($"StartDownSlash called hasJumped={hasJumped} isAirLauncher={isAirLauncher} animNull={animationController == null}");
+    }
+    public void ActivateDownSlash()
+    {
+        // only allow activating the up-move portion while still airborne
+        if (controller != null && controller.isGrounded)
+        {
+            canMoveUpDS = false;
+            return;
+        }
+        canMoveUpDS = true;
+    }
+    public void UpdateDownSlash()
+    {
+        if (!canMoveUpDS)
+        {
+            return;
+        }
+        //need the down slash to move the player up a little bit before slashing down to give it more of a sense of weight and impact
+        controller.Move(transform.up * (AirLauncherSpeed / 2) * Time.deltaTime);
+    }
+
+    public void EndDownSlash()
+    {
+        DownSlashActive = false;
+    }
 
     public void SimpleCombo()
     {
