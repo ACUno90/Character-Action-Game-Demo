@@ -20,7 +20,7 @@ public class GameManger : MonoBehaviour
     [SerializeField] Image BallerImage;
     [SerializeField] Image AwesomeSauceImage;
     //  [SerializeField] Image SupremeImage;
-    public int meterpoints;
+    private int meterpoints;
 
 
 
@@ -53,7 +53,14 @@ public class GameManger : MonoBehaviour
         timeScale_OG = Time.timeScale;
         Player = GameObject.FindGameObjectWithTag("Player");
         PlayerScript = Player.GetComponent<Player>();
-   
+        // initialize meter UI to hidden
+        if (DopeImage != null) DopeImage.gameObject.SetActive(false);
+        if (CrazyImage != null) CrazyImage.gameObject.SetActive(false);
+        if (BallerImage != null) BallerImage.gameObject.SetActive(false);
+        if (AwesomeSauceImage != null) AwesomeSauceImage.gameObject.SetActive(false);
+
+        Debug.Log("GameManger Awake: meter images initialized");
+
     }
 
 
@@ -166,23 +173,28 @@ public class GameManger : MonoBehaviour
 
     public void MeterPointAddage()
     {
-        meterpoints++;
-        //For testing now, will change numbers later
-        if (meterpoints == 1)
-        {
-            DopeImage.enabled = true;
+        // increment and clamp to available meter stages
+        meterpoints = Mathf.Clamp(meterpoints + 1, 0, 4);
+        Debug.Log($"MeterPointAddage called, meterpoints={meterpoints}");
+
+        // Prefer enabling the GameObject so the Image becomes visible even if the component
+        // was disabled or the parent GameObject was inactive in the inspector.
+        if (DopeImage != null) DopeImage.gameObject.SetActive(meterpoints >= 1);
+        if (CrazyImage != null) {
+            DopeImage.gameObject.SetActive(false);
+            CrazyImage.gameObject.SetActive(meterpoints >= 2);
+
         }
-        else if (meterpoints == 2)
+        if (BallerImage != null)
         {
-            CrazyImage.enabled = true;
+            CrazyImage.gameObject.SetActive(false);
+            BallerImage.gameObject.SetActive(meterpoints >= 3);
         }
-        else if (meterpoints == 3)
-        {
-            BallerImage.enabled = true;
-        }
-        else if (meterpoints == 4)
-        {
-            AwesomeSauceImage.enabled = true;
+
+        if (AwesomeSauceImage != null) {
+            BallerImage.gameObject.SetActive(false);
+            AwesomeSauceImage.gameObject.SetActive(meterpoints >= 4);
+
         }
     }
 }

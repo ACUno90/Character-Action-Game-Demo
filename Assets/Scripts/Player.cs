@@ -114,6 +114,9 @@ public class Player : MonoBehaviour, IDamage
         // make a new statemachine
         state = new PlayerStateMachine();
 
+        // cache reference to the GameManger singleton so meter updates work
+        gm = GameManger.Instance;
+
         //Initialize movement state with new state
         MovementSuperState movementState = new MovementSuperState(this, "isMoving", state);
         state.InitializeStateMachine(movementState);
@@ -240,7 +243,6 @@ public class Player : MonoBehaviour, IDamage
         isStinger = true;
         canStingForward = false;
         animationController.SetTrigger("Stinger");
-      //  gm.MeterPointAddage();
 
     }
 
@@ -257,9 +259,13 @@ public class Player : MonoBehaviour, IDamage
         {
             return;
         }
-
         controller.Move(transform.forward * StingerSpeed * Time.deltaTime);
         aud.PlayOneShot(audStinger, audStingVol);
+        if (gm != null)
+        {
+            gm.MeterPointAddage();
+        }
+
     }
 
     public void EndStinger()
@@ -301,10 +307,14 @@ public class Player : MonoBehaviour, IDamage
       
         controller.Move(transform.up * AirLauncherSpeed * Time.deltaTime);
         aud.PlayOneShot(audLauncher, audLauncherVol);
-      
+        if (gm != null)
+        {
+            gm.MeterPointAddage();
+        }
+
     }
 
-  public void EndAirLauncher()
+    public void EndAirLauncher()
     {
         isAirLauncher = false;
     }
