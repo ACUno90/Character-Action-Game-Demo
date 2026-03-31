@@ -3074,6 +3074,8 @@ MonoBehaviour:
   audStingVol: 0.3
   audLauncher: {fileID: 8300000, guid: ff6de26ff8088c347be891f08c1e8c92, type: 3}
   audLauncherVol: 0.3
+  audDownSlash: {fileID: 8300000, guid: 921d508fa22dada44a95fb0fd497e842, type: 3}
+  audDownSlashVol: 0.5
   enemyLayers2:
     serializedVersion: 2
     m_Bits: 512

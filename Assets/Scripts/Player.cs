@@ -57,6 +57,8 @@ public class Player : MonoBehaviour, IDamage
     [SerializeField] float audStingVol;
      [SerializeField] AudioClip audLauncher;
     [SerializeField] float audLauncherVol;
+    [SerializeField] AudioClip audDownSlash;
+    [SerializeField] float audDownSlashVol;
 
     public LayerMask enemyLayers2;
     public bool isStinger;
@@ -243,7 +245,10 @@ public class Player : MonoBehaviour, IDamage
         isStinger = true;
         canStingForward = false;
         animationController.SetTrigger("Stinger");
-
+        //if (gm != null)
+        //{
+        //    gm.MeterPointAddage();
+        //}
     }
 
     public void ActivateStingerForward()
@@ -261,10 +266,10 @@ public class Player : MonoBehaviour, IDamage
         }
         controller.Move(transform.forward * StingerSpeed * Time.deltaTime);
         aud.PlayOneShot(audStinger, audStingVol);
-        if (gm != null)
-        {
-            gm.MeterPointAddage();
-        }
+        //if (gm != null)
+        //{
+        //    gm.MeterPointAddage();
+        //}
 
     }
 
@@ -288,7 +293,10 @@ public class Player : MonoBehaviour, IDamage
         canMoveUp = false;
         //use a trigger instead of bool 
         animationController.SetTrigger("airLauncher");
-       // gm.MeterPointAddage();
+        //if (gm != null)
+        //{
+        //    gm.MeterPointAddage();
+        //}
     }
      
     public void ActivateAirLauncherForce()
@@ -359,6 +367,7 @@ public class Player : MonoBehaviour, IDamage
         }
         //need the down slash to move the player up a little bit before slashing down to give it more of a sense of weight and impact
         controller.Move(transform.up * (AirLauncherSpeed / 2) * Time.deltaTime);
+        aud.PlayOneShot(audDownSlash, audDownSlashVol);
     }
 
     public void EndDownSlash()

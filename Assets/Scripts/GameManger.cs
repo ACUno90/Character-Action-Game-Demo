@@ -170,7 +170,8 @@ public class GameManger : MonoBehaviour
     public void StopClickSound() {
         playerADU.Stop();
     }
-
+    //make it so the points are 0.25 or something like that and make one whole number correspand to an image and make it so we dont get at the same time as the other images and make it so we can only have one image at a time and make it so the images are in order
+    // also make it so whatever image is active they will go away in a few seconds so they dont stay on the screen forever when we get no new points
     public void MeterPointAddage()
     {
         // increment and clamp to available meter stages
