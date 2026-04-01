@@ -8724,9 +8724,10 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 5
     m_NumAlphaKeys: 2
-  AUDclick: []
-  AUDclickV: 0
-  playerADU: {fileID: 0}
+  AUDclick:
+  - {fileID: 8300000, guid: f0a48351d93d96f42adeaabdf0de92c6, type: 3}
+  AUDclickV: 0.5
+  playerADU: {fileID: 456032269}
   Ispaused: 0
   enmenycount: 0
 --- !u!1 &1306229065

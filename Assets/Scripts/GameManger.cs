@@ -20,7 +20,7 @@ public class GameManger : MonoBehaviour
     [SerializeField] Image BallerImage;
     [SerializeField] Image AwesomeSauceImage;
     //  [SerializeField] Image SupremeImage;
-    private int meterpoints;
+    private float meterpoints;
 
 
 
@@ -95,7 +95,7 @@ public class GameManger : MonoBehaviour
         Cursor.lockState = CursorLockMode.Confined;
         Player.GetComponentInChildren<PlayerCamera>().enabled = false;
         PlayerScript.enabled = false;
-
+        PlayClickSound();   
 
     }
 
@@ -110,6 +110,7 @@ public class GameManger : MonoBehaviour
         Menu_Active = null;
         PlayerScript.enabled = true;
         Player.GetComponentInChildren<PlayerCamera>().enabled = true;
+        PlayClickSound();
 
     }
 

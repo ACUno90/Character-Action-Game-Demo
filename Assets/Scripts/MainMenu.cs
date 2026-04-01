@@ -9,6 +9,7 @@ public class MainMenu : MonoBehaviour
     public void PlayGame()
     {
         SceneManager.LoadScene(1);
+        GameManger.Instance.PlayClickSound();
     }
 
 
@@ -16,7 +17,6 @@ public class MainMenu : MonoBehaviour
     {
         //Debug.Log("QUIT!");
        // Application.Quit();
-
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
