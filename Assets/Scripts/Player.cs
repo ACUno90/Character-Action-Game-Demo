@@ -88,6 +88,9 @@ public class Player : MonoBehaviour, IDamage
     private bool jumprun;
     private bool hasJumped;
     public bool dashing;
+
+    // expose down-slash active state for other components (camera) to react to
+    public bool IsDownSlashActive => DownSlashActive;
     public Vector2 turn;
     public float sensitivity = .5f;
     public Animator animationController;
