@@ -19,8 +19,15 @@ public class GameManger : MonoBehaviour
     [SerializeField] Image CrazyImage;
     [SerializeField] Image BallerImage;
     [SerializeField] Image AwesomeSauceImage;
-    //  [SerializeField] Image SupremeImage;
+    [SerializeField] Image SMBar;
+    [SerializeField] Image SMColor;
+    [SerializeField] Slider SMslider;
+    [SerializeField] Gradient SMhealthGradient;
     private float meterpoints;
+    [Header("Meter Settings")]
+    [SerializeField] float meterDecayRate = 0.25f; // points per second
+    [SerializeField] float meterNoDecayDelay = 1.5f; // seconds after gain before decay starts
+    private float lastGainTime = -Mathf.Infinity;
 
 
 
@@ -61,6 +68,34 @@ public class GameManger : MonoBehaviour
 
         Debug.Log("GameManger Awake: meter images initialized");
 
+        // Initialize meter slider if present
+        if (SMslider != null)
+        {
+            SMslider.maxValue = 4f;
+            SMslider.value = meterpoints;
+            if (SMslider.fillRect != null && SMhealthGradient != null)
+            {
+                var img = SMslider.fillRect.GetComponent<Image>();
+                if (img != null) img.color = SMhealthGradient.Evaluate(0f);
+            }
+        }
+
+        // initialize optional images for meter bar and color
+        if (SMBar != null)
+        {
+            SMBar.fillAmount = Mathf.Clamp01(meterpoints / 4f);
+            SMBar.gameObject.SetActive(false);
+        }
+        if (SMColor != null && SMhealthGradient != null)
+        {
+            SMColor.color = SMhealthGradient.Evaluate(Mathf.Clamp01(meterpoints / 4f));
+            SMColor.gameObject.SetActive(false);
+        }
+        if (SMslider != null)
+        {
+            SMslider.gameObject.SetActive(false);
+        }
+
     }
 
 
@@ -83,6 +118,9 @@ public class GameManger : MonoBehaviour
             }
         }
         UpdateHealthBar();
+
+        // handle meter decay over time and update UI
+        UpdateMeterDecay();
 
     }
 
@@ -175,28 +213,62 @@ public class GameManger : MonoBehaviour
     // also make it so whatever image is active they will go away in a few seconds so they dont stay on the screen forever when we get no new points
     public void MeterPointAddage()
     {
-        // increment and clamp to available meter stages
-        meterpoints = Mathf.Clamp(meterpoints + 1, 0, 4);
+        // add 0.5 per call so it takes two increments to advance one full stage
+        meterpoints = Mathf.Clamp(meterpoints + 0.5f, 0f, 4f);
+        lastGainTime = Time.time;
         Debug.Log($"MeterPointAddage called, meterpoints={meterpoints}");
 
-        // Prefer enabling the GameObject so the Image becomes visible even if the component
-        // was disabled or the parent GameObject was inactive in the inspector.
-        if (DopeImage != null) DopeImage.gameObject.SetActive(meterpoints >= 1);
-        if (CrazyImage != null) {
-            DopeImage.gameObject.SetActive(false);
-            CrazyImage.gameObject.SetActive(meterpoints >= 2);
+        // update UI to reflect new fractional value
+        UpdateMeterUI();
+    }
 
-        }
-        if (BallerImage != null)
+    void UpdateMeterDecay()
+    {
+        if (Time.time - lastGainTime < meterNoDecayDelay) return;
+
+        if (meterpoints > 0f)
         {
-            CrazyImage.gameObject.SetActive(false);
-            BallerImage.gameObject.SetActive(meterpoints >= 3);
+            meterpoints = Mathf.Clamp(meterpoints - meterDecayRate * Time.deltaTime, 0f, 4f);
+            UpdateMeterUI();
+        }
+    }
+    //bar doesn't fill up, need to fix this later, also make it so the bar and color only show when we have at least 0.25 points or something like that and make it so they go away when we have no points
+    void UpdateMeterUI()
+    {
+        // update slider fill
+        if (SMslider != null)
+        {
+            SMslider.maxValue = 4f;
+            SMslider.value = meterpoints;
+            if (SMslider.fillRect != null && SMhealthGradient != null)
+            {
+                var img = SMslider.fillRect.GetComponent<Image>();
+                if (img != null) img.color = SMhealthGradient.Evaluate(Mathf.Clamp01(meterpoints / 4f));
+            }
+        }
+        int stage = Mathf.FloorToInt(meterpoints);
+        // show or hide meter UI based on whether any stage image is active
+        bool anyStageActive = stage >= 1;
+        if (SMBar != null)
+        {
+            SMBar.gameObject.SetActive(anyStageActive);
+            SMBar.fillAmount = Mathf.Clamp01(meterpoints / 4f);
+        }
+        if (SMColor != null && SMhealthGradient != null)
+        {
+            SMColor.gameObject.SetActive(anyStageActive);
+            SMColor.color = SMhealthGradient.Evaluate(Mathf.Clamp01(meterpoints / 4f));
+        }
+        if (SMslider != null)
+        {
+            SMslider.gameObject.SetActive(anyStageActive);
         }
 
-        if (AwesomeSauceImage != null) {
-            BallerImage.gameObject.SetActive(false);
-            AwesomeSauceImage.gameObject.SetActive(meterpoints >= 4);
-
-        }
+        // update stage images based on full stage (only one active at a time)
+        //int stage = Mathf.FloorToInt(meterpoints);
+        if (DopeImage != null) DopeImage.gameObject.SetActive(stage == 1);
+        if (CrazyImage != null) CrazyImage.gameObject.SetActive(stage == 2);
+        if (BallerImage != null) BallerImage.gameObject.SetActive(stage == 3);
+        if (AwesomeSauceImage != null) AwesomeSauceImage.gameObject.SetActive(stage == 4);
     }
 }

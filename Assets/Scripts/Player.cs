@@ -248,10 +248,10 @@ public class Player : MonoBehaviour, IDamage
         isStinger = true;
         canStingForward = false;
         animationController.SetTrigger("Stinger");
-        //if (gm != null)
-        //{
-        //    gm.MeterPointAddage();
-        //}
+        if (gm != null)
+        {
+            gm.MeterPointAddage();
+        }
     }
 
     public void ActivateStingerForward()
@@ -296,10 +296,11 @@ public class Player : MonoBehaviour, IDamage
         canMoveUp = false;
         //use a trigger instead of bool 
         animationController.SetTrigger("airLauncher");
-        //if (gm != null)
-        //{
-        //    gm.MeterPointAddage();
-        //}
+        //old way was with whole numbers and made this move not happen, now i set it to float, it works 
+        if (gm != null)
+        {
+            gm.MeterPointAddage();
+        }
     }
      
     public void ActivateAirLauncherForce()
@@ -318,10 +319,10 @@ public class Player : MonoBehaviour, IDamage
       
         controller.Move(transform.up * AirLauncherSpeed * Time.deltaTime);
         aud.PlayOneShot(audLauncher, audLauncherVol);
-        if (gm != null)
-        {
-            gm.MeterPointAddage();
-        }
+        //if (gm != null)
+        //{
+        //    gm.MeterPointAddage();
+        //}
 
     }
 
@@ -351,6 +352,10 @@ public class Player : MonoBehaviour, IDamage
         canMoveUpDS = false;
         animationController.SetTrigger("SlashDown");
         Debug.Log($"StartDownSlash called hasJumped={hasJumped} isAirLauncher={isAirLauncher} animNull={animationController == null}");
+        if (gm != null)
+        {
+            gm.MeterPointAddage();
+        }
     }
     public void ActivateDownSlash()
     {
@@ -385,6 +390,10 @@ public class Player : MonoBehaviour, IDamage
             return;
         }
         noOfClicks++;
+        if (gm != null)
+        {
+            gm.MeterPointAddage();
+        }
 
         AnimatorStateInfo AStates = animationController.GetCurrentAnimatorStateInfo(0);
         if (AStates.IsName("HumanM@Idle01"))
