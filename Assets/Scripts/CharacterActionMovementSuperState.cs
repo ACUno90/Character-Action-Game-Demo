@@ -47,7 +47,7 @@ public class CharacterActionMovementSuperState : PlayerState
 
               if (player.MoveState == Player.MovementState.downSlash)
               {
-            player.UpdateDownSlash();
+                player.UpdateDownSlash();
 
             return;
              }
