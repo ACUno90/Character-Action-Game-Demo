@@ -19,10 +19,10 @@ public class GameManger : MonoBehaviour
     [SerializeField] Image CrazyImage;
     [SerializeField] Image BallerImage;
     [SerializeField] Image AwesomeSauceImage;
-    [SerializeField] Image SMBar;
     [SerializeField] Image SMColor;
+    [SerializeField] Image SMBar;
     [SerializeField] Slider SMslider;
-    [SerializeField] Gradient SMhealthGradient;
+    [SerializeField] Gradient SMColorGradient;
     private float meterpoints;
     [Header("Meter Settings")]
     [SerializeField] float meterDecayRate = 0.25f; // points per second
@@ -73,23 +73,47 @@ public class GameManger : MonoBehaviour
         {
             SMslider.maxValue = 4f;
             SMslider.value = meterpoints;
-            if (SMslider.fillRect != null && SMhealthGradient != null)
+            if (SMslider.fillRect != null && SMColorGradient != null)
             {
                 var img = SMslider.fillRect.GetComponent<Image>();
-                if (img != null) img.color = SMhealthGradient.Evaluate(0f);
+                if (img != null) img.color = SMColorGradient.Evaluate(0f);
             }
         }
 
         // initialize optional images for meter bar and color
         if (SMBar != null)
         {
-            SMBar.fillAmount = Mathf.Clamp01(meterpoints / 4f);
+            // keep SMBar as a full background image (don't use it as the filled visuals)
+            SMBar.type = Image.Type.Simple;
+            // show as empty background (fill handled by SMColor)
+            SMBar.fillAmount = 0f;
             SMBar.gameObject.SetActive(false);
         }
-        if (SMColor != null && SMhealthGradient != null)
+        if (SMColor != null)
         {
-            SMColor.color = SMhealthGradient.Evaluate(Mathf.Clamp01(meterpoints / 4f));
+            // SMColor will be used as the fill visual
+            SMColor.type = Image.Type.Filled;
+            SMColor.fillMethod = Image.FillMethod.Horizontal;
+            SMColor.fillAmount = Mathf.Clamp01(meterpoints / 4f);
+            if (SMColorGradient != null)
+              SMColor.color = SMColorGradient.Evaluate(Mathf.Clamp01(meterpoints / 4f));
+            //if (SMBar != null)
+            //{
+            //    var br = SMBar.rectTransform;
+            //    var cr = SMColor.rectTransform;
+            //    cr.anchorMin = br.anchorMin;
+            //    cr.anchorMax = br.anchorMax;
+            //    cr.anchoredPosition = br.anchoredPosition;
+            //    cr.sizeDelta = br.sizeDelta;
+            //    cr.pivot = br.pivot;
+            //}
+
+
+            SMColor.canvasRenderer.SetAlpha(1f);
+            SMColor.fillAmount = 0f;
             SMColor.gameObject.SetActive(false);
+
+            Debug.Log($"SMColor init sprite={(SMColor.sprite!=null?SMColor.sprite.name:"null")} SMBar sprite={(SMBar!=null && SMBar.sprite!=null?SMBar.sprite.name:"null")}");
         }
         if (SMslider != null)
         {
@@ -240,24 +264,49 @@ public class GameManger : MonoBehaviour
         {
             SMslider.maxValue = 4f;
             SMslider.value = meterpoints;
-            if (SMslider.fillRect != null && SMhealthGradient != null)
+            if (SMslider.fillRect != null && SMColorGradient != null)
             {
                 var img = SMslider.fillRect.GetComponent<Image>();
-                if (img != null) img.color = SMhealthGradient.Evaluate(Mathf.Clamp01(meterpoints / 4f));
+                if (img != null) img.color = SMColorGradient.Evaluate(Mathf.Clamp01(meterpoints / 4f));
             }
         }
         int stage = Mathf.FloorToInt(meterpoints);
-        // show or hide meter UI based on whether any stage image is active
-        bool anyStageActive = stage >= 1;
+        // show or hide meter UI when there is any fractional progress (>0)
+        bool anyStageActive = meterpoints > 0f;
+        float frac = Mathf.Clamp01(meterpoints / 4f);
         if (SMBar != null)
         {
             SMBar.gameObject.SetActive(anyStageActive);
-            SMBar.fillAmount = Mathf.Clamp01(meterpoints / 4f);
+            // keep background bar empty; SMColor provides the colored fill
+           //SMBar.fillAmount = 0f;
         }
-        if (SMColor != null && SMhealthGradient != null)
+        if (SMColor != null)
         {
             SMColor.gameObject.SetActive(anyStageActive);
-            SMColor.color = SMhealthGradient.Evaluate(Mathf.Clamp01(meterpoints / 4f));
+            //// defensive: ensure SMColor is configured as a filled image and visible on top
+            //SMColor.type = Image.Type.Filled;
+            //SMColor.fillMethod = Image.FillMethod.Horizontal;
+            //SMColor.fillOrigin = 0;
+            //SMColor.fillClockwise = true;
+
+            // SMColor represents the fill overlay
+            SMColor.fillAmount = frac;
+            if (SMColorGradient != null)
+            {
+                SMColor.color = SMColorGradient.Evaluate(frac);
+            }
+
+            // make sure the colored overlay is rendered above the background bar
+            try
+            {
+                SMColor.transform.SetAsLastSibling();
+            }
+            catch { }
+
+            // ensure it's visible (canvas renderer)
+            SMColor.canvasRenderer.SetAlpha(1f);
+
+            Debug.Log($"SMColor update: meter={meterpoints} frac={frac} active={SMColor.gameObject.activeSelf} fill={SMColor.fillAmount} sibling={SMColor.transform.GetSiblingIndex()}");
         }
         if (SMslider != null)
         {
