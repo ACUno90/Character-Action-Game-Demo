@@ -167,7 +167,7 @@ public class Player : MonoBehaviour, IDamage
         }
         moveDirc = Input.GetAxis("Horizontal") * transform.right + Input.GetAxis("Vertical") * transform.forward;
 
-
+        
 
 
         controller.Move(moveDirc * Speed * Time.deltaTime);
